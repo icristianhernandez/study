@@ -13,7 +13,7 @@
  */
 
 #include "generic-menu.cpp"
-/*#include <conio.h>*/
+#include <conio.h>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
