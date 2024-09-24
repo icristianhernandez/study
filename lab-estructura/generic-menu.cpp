@@ -29,8 +29,6 @@
         }
 */
 
-#pragma once
-
 #include <cstdlib>    // For system calls (consider portability alternatives)
 #include <functional> // For function pointers in menu_options
 #include <iostream>
@@ -62,6 +60,16 @@ void pause_screen() {
 // clears the input stream and returns false.
 bool is_valid_int_input(int &input_int) {
     if (cin >> input_int) {
+        return true;
+    } else {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return false;
+    }
+}
+
+bool is_valid_string_input(string &input_string) {
+    if (cin >> input_string) {
         return true;
     } else {
         cin.clear();
