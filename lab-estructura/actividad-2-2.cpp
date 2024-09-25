@@ -133,8 +133,11 @@ void changeBounds() {
 int main() {
     srand(time(0));
 
-    string menu_header = "Menu de prueba\n";
-    string menu_input_request = "\nSeleccione una opcion: ";
+    /*string menu_header = "Menu de prueba\n";*/
+    string menu_header =
+        "Programa que anade aleatoriamente valores a una pila y permite buscar "
+        "las ocurrencias de un numero dado por el usuario \n";
+	string menu_input_request = "\nSeleccione una opcion: ";
 
     map<int, MenuOption> menu_options = {
         {1, {"1. Iniciar el Programa", startProgram}},
