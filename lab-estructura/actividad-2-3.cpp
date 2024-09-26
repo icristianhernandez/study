@@ -1,6 +1,6 @@
-#include "generic-menu.cpp"
-#include <array>
-#include <conio.h>
+#include "generic-menu.h"
+#include "my-basic-utils.h"
+/*#include <conio.h>*/
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -9,10 +9,6 @@
 #include <unistd.h>
 
 using namespace std;
-
-int getRandomInt(int min, int max) { return rand() % (max - min + 1) + min; }
-
-bool fiftyProb() { return getRandomInt(1, 2) == 1; }
 
 void startProgram() {
     stack<int> stacks_of_plates;
@@ -103,7 +99,7 @@ void startProgram() {
 int main() {
     srand(time(0));
 
-string menu_header =
+    string menu_header =
         "Programa que simula el flujo de platos lavados y entregados en una "
         "cocina. Cuando el usuario desee, se detiene la simulacion y muestra "
         "la cantidad disponible de platos lavados y la distribucion por tipos "

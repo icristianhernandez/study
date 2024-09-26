@@ -2,8 +2,8 @@
     Generic menu system for console applications in C++.
 
     This generic menu allows you handle a basic template and pass the options as
-   functions to being called, allowing a dynamic programming of the behaviour of
-   the menu. Also, includes a generic exit option.
+    functions to being called, allowing a dynamic programming of the behaviour
+    of the menu. Also, includes a generic exit option.
 
     Example of usage:
         #include "generic-menu.cpp"
@@ -25,10 +25,18 @@
             };
 
             display_menu("Menú de Pruebas", menu_options, "\nSeleccione una
-   opción: ");
+    opción: ");
         }
 */
 
+// TODO: Add defalt values for arguments in display_menu function
+// TODO: Add a way to pass a custom exit message
+// TODO: Pass the utility functions to a separate headers
+// TODO: Add utility to print in a color
+// TODO: Define if I going to programming in windows or linux, and of what way
+
+#pragma once
+#include "my-basic-utils.h"
 #include <cstdlib>    // For system calls (consider portability alternatives)
 #include <functional> // For function pointers in menu_options
 #include <iostream>
@@ -37,46 +45,6 @@
 #include <string>
 
 using namespace std;
-
-void clear_screen() {
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-
-void pause_screen() {
-#ifdef _WIN32
-    system("pause");
-#else
-    cout << "Press Enter to continue...";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.get();
-#endif
-}
-
-// Checks if the input is a valid integer and returns true if it is, otherwise
-// clears the input stream and returns false.
-bool is_valid_int_input(int &input_int) {
-    if (cin >> input_int) {
-        return true;
-    } else {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return false;
-    }
-}
-
-bool is_valid_string_input(string &input_string) {
-    if (cin >> input_string) {
-        return true;
-    } else {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return false;
-    }
-}
 
 // Function type alias for menu options
 using MenuFunction = function<void()>;
@@ -88,9 +56,9 @@ struct MenuOption {
 };
 
 // Create a menu with header, options, and prompt messages
-void display_menu(const string &menu_header_msg,
-                  const map<int, MenuOption> &menu_options,
-                  const string &ask_option_msg) {
+inline void display_menu(const string &menu_header_msg,
+                         const map<int, MenuOption> &menu_options,
+                         const string &ask_option_msg) {
     if (menu_options.empty()) {
         cout << "No hay opciones disponibles." << endl;
         return;
