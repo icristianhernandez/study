@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdlib>
 #include <iostream>
 #include <limits>
@@ -72,20 +73,3 @@ inline int getRandomInt(int min, int max) {
 }
 
 inline bool fiftyProb() { return getRandomInt(1, 2) == 1; }
-
-inline bool _kbhit() {
-    // Generic implementation of kbhit for Windows and Linux
-#ifdef _WIN32
-    return _kbhit();
-#else
-    struct timeval tv;
-    fd_set fds;
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-    FD_ZERO(&fds);
-    FD_SET(0, &fds); // STDIN_FILENO is 0
-    select(1, &fds, NULL, NULL, &tv);
-    return FD_ISSET(0, &fds);
-
-#endif
-}

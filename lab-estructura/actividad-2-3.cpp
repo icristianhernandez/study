@@ -1,6 +1,6 @@
 #include "generic-menu.h"
+#include "kbhit.h"
 #include "my-basic-utils.h"
-/*#include <conio.h>*/
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -24,13 +24,11 @@ void startProgram() {
     int white_plates_count = 0;
     int red_plates_count = 0;
 
-    system("Color 8");
-
     cout << "La cocina ha abierto. Se empezaran a lavar y entregar platos"
          << endl
          << endl;
 
-    while (!kbhit()) {
+    while (!_kbhit()) {
         bool plates_clearing = fiftyProb();
         int affected_type_plate;
         string states_msg = "";
@@ -70,11 +68,8 @@ void startProgram() {
         }
 
         if (affected_type_plate == 1) {
-            system("Color 1");
         } else if (affected_type_plate == 2) {
-            system("Color 7");
         } else {
-            system("Color 4");
         }
 
         cout << states_msg << endl;
@@ -84,15 +79,11 @@ void startProgram() {
 
     cout << endl << endl;
     cout << "Reporte Actual De Platos" << endl;
-    system("Color 1");
     cout << "Hay " << blue_plates_count << " platos azules." << endl;
-    system("Color 7");
     cout << "Hay " << white_plates_count << " platos blancos." << endl;
-    system("Color 4");
     cout << "Hay " << red_plates_count << " platos rojos." << endl;
     cout << endl;
 
-    system("Color 7");
     pause_screen();
 }
 
