@@ -12,8 +12,10 @@
     Subject: Labotarorio de Estructura de Datos
  */
 
-#include "generic-menu.cpp"
-#include <conio.h>
+#include "generic-menu.h"
+#include "kbhit.h"
+#include "my-basic-utils.h"
+/*#include <conio.h>*/
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -28,8 +30,6 @@ struct StackBounds {
 };
 
 StackBounds stack_bounds = {1, 100};
-
-int getRandomInt(int min, int max) { return rand() % (max - min + 1) + min; }
 
 void printStack(stack<int> stack_of_numbers) {
     while (!stack_of_numbers.empty()) {
@@ -61,7 +61,7 @@ void startProgram() {
     string repeat_answer;
 
     // clear
-    clear_screen();
+    clearScreen();
 
     cout << "Se comenzara a anadir numeros a la pila cada segundo" << endl
          << "Presione cualquier tecla para detener" << endl
@@ -74,7 +74,7 @@ void startProgram() {
 
         sleep(1);
 
-        if (kbhit()) {
+        if (_kbhit()) {
             break;
         }
     }
@@ -86,7 +86,7 @@ void startProgram() {
     cout << endl << endl;
 
     cout << "Ingrese el numero que desea saber cuantas veces aparece: ";
-    while (!is_valid_int_input(number_to_search)) {
+    while (!getAndValidateIntegerInput(number_to_search)) {
         cout << "Ingrese un numero valido: ";
     }
 
@@ -97,7 +97,7 @@ void startProgram() {
 
     cout << endl;
     cout << "Desea repetir el proceso? (y/n): ";
-    while (!is_valid_string_input(repeat_answer) ||
+    while (!getAndvalidateStringInput(repeat_answer) ||
            (repeat_answer != "y" && repeat_answer != "n")) {
         cout << "Ingrese una respuesta valida: ";
     }
@@ -112,12 +112,12 @@ void changeBounds() {
     int new_max;
 
     cout << "Ingrese el nuevo limite inferior: ";
-    while (!is_valid_int_input(new_min)) {
+    while (!getAndValidateIntegerInput(new_min)) {
         cout << "Ingrese un numero valido: ";
     }
 
     cout << "Ingrese el nuevo limite superior: ";
-    while (!is_valid_int_input(new_max) || new_max <= new_min) {
+    while (!getAndValidateIntegerInput(new_max) || new_max <= new_min) {
         cout << "Ingrese un numero valido: ";
     }
 
@@ -127,7 +127,7 @@ void changeBounds() {
     cout << "Los limites han sido cambiados a: [" << stack_bounds.min << ", "
          << stack_bounds.max << "]" << endl;
 
-    pause_screen();
+    pauseScreen();
 }
 
 int main() {
@@ -137,7 +137,7 @@ int main() {
     string menu_header =
         "Programa que anade aleatoriamente valores a una pila y permite buscar "
         "las ocurrencias de un numero dado por el usuario \n";
-	string menu_input_request = "\nSeleccione una opcion: ";
+    string menu_input_request = "\nSeleccione una opcion: ";
 
     map<int, MenuOption> menu_options = {
         {1, {"1. Iniciar el Programa", startProgram}},
