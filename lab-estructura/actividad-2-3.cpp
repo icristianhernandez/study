@@ -22,8 +22,7 @@ void startProgram() {
     stack<int> stacks_of_plates;
     int plates_total = 0;
 
-    unordered_map<int, Color> colors = {
-        {1, {"Azul", 1, 0}}, {2, {"Verde", 2, 0}}, {3, {"Rojo", 3, 0}}};
+    Color colors[3] = {{"Azul", 1, 0}, {"Verde", 2, 0}, {"Rojo", 4, 0}};
 
     cout << "Se abrira la cocina." << endl;
     cout << "Se simular el flujo de platos lavados y entregados." << endl;
@@ -37,7 +36,7 @@ void startProgram() {
         string states_msg = "";
 
         if (plates_clearing) {
-            affected_plate_index = getRandomInt(1, 3);
+            affected_plate_index = getRandomInt(0, 2);
             plates_total += 1;
             stacks_of_plates.push(affected_plate_index);
 
@@ -67,8 +66,8 @@ void startProgram() {
     cout << endl << endl;
     cout << "Distribucion de platos por color (" << plates_total
          << " platos ):" << endl;
-    for (auto const &[key, value] : colors) {
-        cout << "  " << "Color " << value.name << ": " << value.count << endl;
+    for (auto const &[color_name, color_id, color_counter] : colors) {
+        cout << "  " << "Color " << color_name << ": " << color_counter << endl;
     }
 
     cout << endl;
