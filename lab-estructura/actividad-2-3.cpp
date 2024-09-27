@@ -30,8 +30,8 @@ void startProgram() {
     Color colors[3] = {{"Azul", 4, 0}, {"Verde", 2, 0}, {"Rojo", 1, 0}};
 
     cout << "Se abrira la cocina." << endl;
-    cout << "Se simular el flujo de platos lavados y entregados." << endl;
-    cout << "Presione cualquier tecla para detener la simulacion." << endl;
+    cout << "Se simulara el flujo de platos lavados y entregados." << endl;
+    cout << "  (Presione cualquier tecla para detener la simulacion.)" << endl;
     cout << endl;
 
     // simulation loop
