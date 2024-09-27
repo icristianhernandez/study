@@ -1,20 +1,25 @@
+// This program simulates the flow of washed and delivered plates in a kitchen.
+// Plates are randomly added or removed from a stack, and each plate has a
+// color. The simulation runs until the user presses a key, at which point it
+// displays the total number of plates and their distribution by color.
+
 #include "generic-menu.h"
 #include "kbhit.h"
 #include "my-basic-utils.h"
+
+#include <chrono>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
-#include <ostream>
 #include <stack>
-#include <stdlib.h>
-#include <unistd.h>
+#include <thread>
 
 using namespace std;
 
 // color struct
 struct Color {
     string name;
-    int ansi_id;
+    int ansiCode;
     int count;
 };
 
@@ -66,20 +71,20 @@ void startProgram() {
         } else {
             states_msg = "    " + states_msg + "\n";
             printColoredString(states_msg,
-                               colors[affected_plate_index].ansi_id);
+                               colors[affected_plate_index].ansiCode);
         }
 
-        sleep(1);
+        this_thread::sleep_for(chrono::seconds(1));
     }
 
     // report final state
     cout << endl << endl;
     cout << "Distribucion de platos por color (" << plates_total
          << " platos ):" << endl;
-    for (auto const &[color_name, color_ansi_id, color_counter] : colors) {
+    for (const Color &color : colors) {
         string report_msg =
-            "  Color " + color_name + ": " + to_string(color_counter) + "\n";
-        printColoredString(report_msg, color_ansi_id);
+            "  Color " + color.name + ": " + to_string(color.count) + "\n";
+        printColoredString(report_msg, color.ansiCode);
     }
 
     cout << endl;
