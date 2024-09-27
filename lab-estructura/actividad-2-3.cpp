@@ -14,7 +14,7 @@ using namespace std;
 // color struct
 struct Color {
     string name;
-    int id;
+    int ansi_id;
     int count;
 };
 
@@ -37,20 +37,22 @@ void startProgram() {
 
         if (plates_clearing) {
             affected_plate_index = getRandomInt(0, 2);
-            plates_total += 1;
             stacks_of_plates.push(affected_plate_index);
 
             states_msg = "Se ha agregado(+) un plato de color " +
                          colors[affected_plate_index].name + ".";
+
+            plates_total += 1;
             colors[affected_plate_index].count += 1;
 
         } else if (!stacks_of_plates.empty()) {
             affected_plate_index = stacks_of_plates.top();
-            plates_total -= 1;
             stacks_of_plates.pop();
 
             states_msg = "Se retira(-) un plato de color " +
                          colors[affected_plate_index].name + ".";
+
+            plates_total -= 1;
             colors[affected_plate_index].count -= 1;
 
         } else {
@@ -63,7 +65,8 @@ void startProgram() {
 
         } else {
             states_msg = "    " + states_msg + "\n";
-            printColoredString(states_msg, colors[affected_plate_index].id);
+            printColoredString(states_msg,
+                               colors[affected_plate_index].ansi_id);
         }
 
         sleep(1);
@@ -73,10 +76,10 @@ void startProgram() {
     cout << endl << endl;
     cout << "Distribucion de platos por color (" << plates_total
          << " platos ):" << endl;
-    for (auto const &[color_name, color_id, color_counter] : colors) {
+    for (auto const &[color_name, color_ansi_id, color_counter] : colors) {
         string report_msg =
             "  Color " + color_name + ": " + to_string(color_counter) + "\n";
-        printColoredString(report_msg, color_id);
+        printColoredString(report_msg, color_ansi_id);
     }
 
     cout << endl;
@@ -101,38 +104,3 @@ int main() {
 
     return 0;
 }
-
-/*
-    stack<int> stacks_of_plates;
-    int plates_total = 0;
-
-    // Initialize colors
-    unordered_map<int, Color> colors = {
-        {1, {"azul", 0, 1}},
-        {2, {"blanco", 0, 2}},
-        {3, {"rojo", 0, 3}}
-    };
-
-    while (!_kbhit()) {
-        bool plates_clearing = fiftyProb();
-        int affected_type_plate;
-        string states_msg = "";
-
-        if (plates_clearing) {
-            affected_type_plate = getRandomInt(1, 3);
-            plates_total += 1;
-            stacks_of_plates.push(affected_type_plate);
-            states_msg = generateStateMessage(true,
-   colors[affected_type_plate]); updatePlateCount(colors[affected_type_plate],
-   1); } else if (!stacks_of_plates.empty()) { affected_type_plate =
-   stacks_of_plates.top(); plates_total -= 1; stacks_of_plates.pop(); states_msg
-   = generateStateMessage(false, colors[affected_type_plate]);
-            updatePlateCount(colors[affected_type_plate], -1);
-        } else {
-            states_msg = "No sucede nada.";
-        }
-
-        cout << states_msg << endl;
-        this_thread::sleep_for(chrono::seconds(1));
-    }
-*/
