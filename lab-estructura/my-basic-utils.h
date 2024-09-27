@@ -6,7 +6,7 @@
 
 using namespace std;
 
-inline void clear_screen() {
+inline void clearScreen() {
 #ifdef _WIN32
     system("cls");
 #else
@@ -14,7 +14,7 @@ inline void clear_screen() {
 #endif
 }
 
-inline void pause_screen() {
+inline void pauseScreen() {
 #ifdef _WIN32
     system("pause");
 #else
@@ -24,7 +24,7 @@ inline void pause_screen() {
 #endif
 }
 
-inline bool is_valid_int_input(int &input_int) {
+inline bool getAndValidateIntegerInput(int &input_int) {
     if (cin >> input_int) {
         return true;
     } else {
@@ -34,7 +34,7 @@ inline bool is_valid_int_input(int &input_int) {
     }
 }
 
-inline bool is_valid_string_input(string &input_string) {
+inline bool getAndvalidateStringInput(string &input_string) {
     if (cin >> input_string) {
         return true;
     } else {
@@ -44,7 +44,17 @@ inline bool is_valid_string_input(string &input_string) {
     }
 }
 
-inline void print_color_string(string text, int color) {
+inline bool isValidInput() {
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return false;
+    } else {
+        return true;
+    }
+}
+
+inline void printColorString(string text, int color) {
     /*
         Color codes:
         0 = Black

@@ -24,9 +24,8 @@ void startProgram() {
     int white_plates_count = 0;
     int red_plates_count = 0;
 
-    cout << "La cocina ha abierto. Se empezaran a lavar y entregar platos"
-         << endl
-         << endl;
+    cout << "La cocina se ha abierto. " << endl;
+    cout << "Se empezaran a lavar y entregar platos." << endl << endl;
 
     while (!_kbhit()) {
         bool plates_clearing = fiftyProb();
@@ -84,7 +83,7 @@ void startProgram() {
     cout << "Hay " << red_plates_count << " platos rojos." << endl;
     cout << endl;
 
-    pause_screen();
+    pauseScreen();
 }
 
 int main() {

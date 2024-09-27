@@ -69,7 +69,7 @@ inline void display_menu(const string &menu_header_msg,
     string invalid_input_msg = "\nOpción inválida. Introduzca nuevamente: ";
 
     while (is_running) {
-        clear_screen();
+        clearScreen();
         cout << menu_header_msg << endl;
 
         for (const auto &[option_number, menu_option] : menu_options) {
@@ -80,7 +80,7 @@ inline void display_menu(const string &menu_header_msg,
         cout << (last_input_was_invalid ? invalid_input_msg : ask_option_msg);
 
         int selected_option;
-        bool valid_input = is_valid_int_input(selected_option);
+        bool valid_input = getAndValidateIntegerInput(selected_option);
         bool valid_option =
             (selected_option == 0 || menu_options.count(selected_option));
 
@@ -90,7 +90,7 @@ inline void display_menu(const string &menu_header_msg,
         }
         last_input_was_invalid = false;
 
-        clear_screen();
+        clearScreen();
 
         if (selected_option == 0) {
             is_running = false;
