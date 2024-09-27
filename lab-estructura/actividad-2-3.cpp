@@ -22,12 +22,12 @@ void startProgram() {
     stack<int> stacks_of_plates;
     int plates_total = 0;
 
-    Color colors[3] = {{"Azul", 1, 0}, {"Verde", 2, 0}, {"Rojo", 4, 0}};
+    Color colors[3] = {{"Azul", 4, 0}, {"Verde", 2, 0}, {"Rojo", 1, 0}};
 
     cout << "Se abrira la cocina." << endl;
     cout << "Se simular el flujo de platos lavados y entregados." << endl;
     cout << "Presione cualquier tecla para detener la simulacion." << endl;
-    cout << endl << endl;
+    cout << endl;
 
     // simulation loop
     while (!_kbhit()) {
@@ -57,7 +57,14 @@ void startProgram() {
             states_msg = "No sucede nada.";
         }
 
-        cout << "    " << states_msg << endl;
+        if (states_msg == "No sucede nada.") {
+            states_msg = "    " + states_msg + "\n";
+            cout << states_msg;
+
+        } else {
+            states_msg = "    " + states_msg + "\n";
+            printColoredString(states_msg, colors[affected_plate_index].id);
+        }
 
         sleep(1);
     }
@@ -67,7 +74,9 @@ void startProgram() {
     cout << "Distribucion de platos por color (" << plates_total
          << " platos ):" << endl;
     for (auto const &[color_name, color_id, color_counter] : colors) {
-        cout << "  " << "Color " << color_name << ": " << color_counter << endl;
+        string report_msg =
+            "  Color " + color_name + ": " + to_string(color_counter) + "\n";
+        printColoredString(report_msg, color_id);
     }
 
     cout << endl;
