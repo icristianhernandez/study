@@ -11,74 +11,76 @@ import time
 from mymodule import *
 
 if __name__ == "__main__":
-    cola_size = 8
-    cola = array.array("i", [0] * cola_size)
-    fin = 1
-    inicio = 1
-    ocuped_places = 0
-    entered_people = 0
-    leaved_people = 0
-    null_actions = 0
+    repeat_simulation = True
+    while repeat_simulation:
+        cola_size = 8
+        cola = array.array("i", [0] * cola_size)
+        fin = 1
+        inicio = 1
+        ocuped_places = 0
+        entered_people = 0
+        leaved_people = 0
+        null_actions = 0
 
-    clear_screen()
+        clear_screen()
 
-    initial_msg = """Simulación del flujo de cola de un cajero automático.
+        initial_msg = """Simulación del flujo de cola de un cajero automático.
 El cajero tiene una capacidad máxima de 8 personas
 y entrarán y se irán personas continuamente.
 
-    """
+        """
 
-    print_colored(initial_msg, "magenta")
+        print_colored(initial_msg, "magenta")
 
-    while not kbhit():
-        people_enter = probability_check(45)
-        people_leave = probability_check(85)
-        status_msg = ""
-        print_color = ""
+        while not kbhit():
+            people_enter = probability_check(45)
+            people_leave = probability_check(85)
+            status_msg = ""
+            print_color = ""
 
-        if people_enter and ocuped_places < cola_size:
-            entered_people += 1
-            cola[fin - 1] = entered_people
+            if people_enter and ocuped_places < cola_size:
+                entered_people += 1
+                cola[fin - 1] = entered_people
 
-            status_msg = "    Entró(+) la persona número " + str(cola[fin - 1])
-            print_color = "green"
+                status_msg = "    Entró(+) la persona número " + str(cola[fin - 1])
+                print_color = "green"
 
-            fin = (fin % cola_size) + 1
-            ocuped_places += 1
-        elif people_enter and ocuped_places == cola_size:
-            status_msg = (
-                "    No entró la persona número "
-                + str(entered_people + 1)
-                + " por falta de espacio."
-            )
-            print_color = "yellow"
+                fin = (fin % cola_size) + 1
+                ocuped_places += 1
+            elif people_enter and ocuped_places == cola_size:
+                status_msg = (
+                    "    No entró la persona número "
+                    + str(entered_people + 1)
+                    + " por falta de espacio."
+                )
+                print_color = "yellow"
 
-            null_actions += 1
-        elif people_leave and ocuped_places > 0:
-            status_msg = "    Salió(-) la persona número " + str(cola[inicio - 1])
-            print_color = "red"
+                null_actions += 1
+            elif people_leave and ocuped_places > 0:
+                status_msg = "    Salió(-) la persona número " + str(cola[inicio - 1])
+                print_color = "red"
 
-            cola[inicio - 1] = 0
-            inicio = (inicio % cola_size) + 1
-            ocuped_places -= 1
-            leaved_people += 1
-        elif people_leave and ocuped_places == 0:
-            status_msg = "    No salió ninguna persona por falta de personas."
-            print_color = "yellow"
+                cola[inicio - 1] = 0
+                inicio = (inicio % cola_size) + 1
+                ocuped_places -= 1
+                leaved_people += 1
+            elif people_leave and ocuped_places == 0:
+                status_msg = "    No salió ninguna persona por falta de personas."
+                print_color = "yellow"
 
-            null_actions += 1
-        else:
-            status_msg = "    No entró ni salió ninguna persona."
-            print_color = "white"
-            null_actions += 1
+                null_actions += 1
+            else:
+                status_msg = "    No entró ni salió ninguna persona."
+                print_color = "white"
+                null_actions += 1
 
-        print_colored(status_msg, print_color)
+            print_colored(status_msg, print_color)
 
-        time.sleep(1)
+            time.sleep(1)
 
-    cola_representation = " ".join([str(x) for x in cola])
+        cola_representation = " ".join([str(x) for x in cola])
 
-    final_msg = """
+        final_msg = """
 
 Resultado de la simulación:
   - Personas que entraron: {}
@@ -87,11 +89,19 @@ Resultado de la simulación:
   - Estado de la cola: {}
   - Inicio: {}
   - Fin: {}
-    """.format(
-        entered_people, leaved_people, null_actions, cola_representation, inicio, fin
-    )
+        """.format(
+            entered_people,
+            leaved_people,
+            null_actions,
+            cola_representation,
+            inicio,
+            fin,
+        )
 
-    print_colored(final_msg, "magenta")
+        print_colored(final_msg, "magenta")
 
-    stop()
-    clear_screen()
+        repeat = input("¿Desea repetir la simulación? (s/n): ").strip().lower()
+        if repeat != "s":
+            repeat_simulation = False
+
+        clear_screen()
