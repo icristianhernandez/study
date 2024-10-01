@@ -11,10 +11,13 @@ import time
 from mymodule import *
 
 if __name__ == "__main__":
-    cola = array.array("i", [0] * 8)
-    fin = -1
+    cola_size = 8
+    cola = array.array("i", [0] * cola_size)
+    fin = 1
+    inicio = 1
+    ocuped_places = 0
     entered_people = 0
-    leaved_pepole = 0
+    leaved_people = 0
     null_actions = 0
 
     clear_screen()
@@ -33,21 +36,23 @@ y entrarán y se irán personas continuamente.
         status_msg = ""
         print_color = ""
 
-        if people_enter and fin < 7:
-            fin += 1
-            cola[fin] = fin + 1
-
-            status_msg = "    Entró(+) la persona número " + str(fin + 1)
-            print_color = "green"
+        if people_enter and ocuped_places < cola_size:
             entered_people += 1
-        elif people_leave and fin > -1:
-            cola[fin] = 0
-            status_msg = "    Salió(-) la persona número " + str(fin + 1)
+            cola[fin - 1] = entered_people
+
+            status_msg = "    Entró(+) la persona número " + str(cola[fin - 1])
+            print_color = "green"
+
+            fin = (fin % cola_size) + 1
+            ocuped_places += 1
+        elif people_leave and ocuped_places > 0:
+            status_msg = "    Salió(-) la persona número " + str(cola[inicio - 1])
             print_color = "red"
 
-            fin -= 1
-
-            leaved_pepole += 1
+            cola[inicio - 1] = 0
+            inicio = (inicio % cola_size) + 1
+            ocuped_places -= 1
+            leaved_people += 1
         else:
             status_msg = "    No entró ni salió ninguna persona."
             print_color = "white"
@@ -66,8 +71,10 @@ Resultado de la simulación:
   - Personas que salieron: {}
   - Acciones nulas: {}
   - Estado de la cola: {}
+  - Inicio: {}
+  - Fin: {}
     """.format(
-        entered_people, leaved_pepole, null_actions, cola_representation
+        entered_people, leaved_people, null_actions, cola_representation, inicio, fin
     )
 
     print_colored(final_msg, "magenta")
