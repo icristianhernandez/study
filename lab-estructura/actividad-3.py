@@ -45,6 +45,15 @@ y entrarán y se irán personas continuamente.
 
             fin = (fin % cola_size) + 1
             ocuped_places += 1
+        elif people_enter and ocuped_places == cola_size:
+            status_msg = (
+                "    No entró la persona número "
+                + str(entered_people + 1)
+                + " por falta de espacio."
+            )
+            print_color = "yellow"
+
+            null_actions += 1
         elif people_leave and ocuped_places > 0:
             status_msg = "    Salió(-) la persona número " + str(cola[inicio - 1])
             print_color = "red"
@@ -53,6 +62,11 @@ y entrarán y se irán personas continuamente.
             inicio = (inicio % cola_size) + 1
             ocuped_places -= 1
             leaved_people += 1
+        elif people_leave and ocuped_places == 0:
+            status_msg = "    No salió ninguna persona por falta de personas."
+            print_color = "yellow"
+
+            null_actions += 1
         else:
             status_msg = "    No entró ni salió ninguna persona."
             print_color = "white"
