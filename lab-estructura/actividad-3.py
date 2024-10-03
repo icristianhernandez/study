@@ -22,7 +22,7 @@ if __name__ == "__main__":
         leaved_people = 0
         null_actions = 0
 
-        clear_screen()
+        clear_console_screen()
 
         initial_msg = """Simulación del flujo de cola de un cajero automático.
 El cajero tiene una capacidad máxima de 8 personas
@@ -30,11 +30,11 @@ y entrarán y se irán personas continuamente.
 
         """
 
-        print_colored(initial_msg, "magenta")
+        print_with_color(initial_msg, "magenta")
 
-        while not kbhit():
-            people_enter = probability_check(45)
-            people_leave = probability_check(85)
+        while not is_key_pressed():
+            people_enter = check_probability(45)
+            people_leave = check_probability(85)
             status_msg = ""
             print_color = ""
 
@@ -74,7 +74,7 @@ y entrarán y se irán personas continuamente.
                 print_color = "white"
                 null_actions += 1
 
-            print_colored(status_msg, print_color)
+            print_with_color(status_msg, print_color)
 
             time.sleep(1)
 
@@ -98,10 +98,10 @@ Resultado de la simulación:
             fin,
         )
 
-        print_colored(final_msg, "magenta")
+        print_with_color(final_msg, "magenta")
 
         repeat = input("¿Desea repetir la simulación? (s/n): ").strip().lower()
         if repeat != "s":
             repeat_simulation = False
 
-        clear_screen()
+        clear_console_screen()

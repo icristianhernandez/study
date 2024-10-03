@@ -1,11 +1,18 @@
-import sys
-import random
 import os
+import random
+import sys
+from typing import Union
+
+if sys.platform == "win32":
+    import ctypes
+    import msvcrt
+else:
+    import select
 
 
-def clear_screen():
+def clear_console_screen() -> None:
     """
-    Clears the console screen.
+    Clears the console screen on both Windows and non-Windows systems.
 
     Args:
         None
@@ -19,9 +26,9 @@ def clear_screen():
         os.system("clear")
 
 
-def stop():
+def pause() -> None:
     """
-    Stops the app until the user presses a key.
+    Pauses the execution until the user presses a key.
 
     Args:
         None
@@ -32,33 +39,31 @@ def stop():
     if sys.platform == "win32":
         os.system("pause")
     else:
-        os.system("read -n 1 -s -p 'Press any key to continue...'")
+        os.system("read -n 1 -s -r -p 'Press any key to continue...'")
 
 
-if sys.platform == "win32":
-    import ctypes
+def print_with_color(text: str, color: str) -> None:
+    """
+    Prints a string with the specified color on both Windows and non-Windows systems.
 
-    def print_colored(text, color):
-        """
-        Prints a string with the specified color on Windows.
+    Args:
+        text (str): The text to print.
+        color (str): The color code (e.g., 'red', 'green', 'blue').
 
-        Args:
-            text (str): The text to print.
-            color (str): The color code (e.g., 'red', 'green', 'blue').
+    Returns:
+        None
 
-        Returns:
-            None
-
-        Note:
-            Available colors:
-            - red
-            - green
-            - blue
-            - yellow
-            - magenta
-            - cyan
-            - white
-        """
+    Note:
+        Available colors:
+        - red
+        - green
+        - blue
+        - yellow
+        - magenta
+        - cyan
+        - white
+    """
+    if sys.platform == "win32":
         colors = {
             "red": 0x04,
             "green": 0x02,
@@ -69,36 +74,19 @@ if sys.platform == "win32":
             "white": 0x07,
         }
 
+        if not all(isinstance(arg, str) for arg in [text, color]):
+            raise ValueError("Both text and color must be strings")
+
+        if color not in colors:
+            raise ValueError("Invalid color")
+
         handle = ctypes.windll.kernel32.GetStdHandle(-11)
         ctypes.windll.kernel32.SetConsoleTextAttribute(handle, colors[color])
         print(text)
         ctypes.windll.kernel32.SetConsoleTextAttribute(
             handle, 0x07
         )  # Reset to default color
-
-else:
-
-    def print_colored(text, color):
-        """
-        Prints a string with the specified color on Linux/macOS.
-
-        Args:
-            text (str): The text to print.
-            color (str): The color code (e.g., 'red', 'green', 'blue').
-
-        Returns:
-            None
-
-        Note:
-            Available colors:
-            - red
-            - green
-            - blue
-            - yellow
-            - magenta
-            - cyan
-            - white
-        """
+    else:
         colors = {
             "red": "\033[91m",
             "green": "\033[92m",
@@ -109,16 +97,19 @@ else:
             "white": "\033[97m",
         }
 
-        if color not in colors:
-            raise ValueError("Invalid color")
-
         if not isinstance(text, str):
             raise ValueError("text must be a string")
+
+        if not isinstance(color, str):
+            raise ValueError("color must be a string")
+
+        if color not in colors:
+            raise ValueError("Invalid color")
 
         print(colors[color] + text + "\033[0m")
 
 
-def generate_random_int(min_value, max_value):
+def generate_random_int(min_value: int, max_value: int) -> int:
     """
     Generates a random integer within the specified range.
 
@@ -129,60 +120,47 @@ def generate_random_int(min_value, max_value):
     Returns:
         int: A random integer within the specified range.
     """
-    if min_value > max_value:
-        raise ValueError("min_value must be less than or equal to max_value")
-
     if not isinstance(min_value, int) or not isinstance(max_value, int):
         raise ValueError("min_value and max_value must be integers")
+
+    if min_value > max_value:
+        raise ValueError("min_value must be less than or equal to max_value")
 
     return random.randint(min_value, max_value)
 
 
-def probability_check(probability):
+def check_probability(probability: Union[int, float]) -> bool:
     """
     Returns True with the specified probability.
 
     Args:
-        probability (int): The probability of returning True (0-100).
+        probability (float): The probability of returning True (0.0-100.0).
 
     Returns:
         bool: True with the specified probability, False otherwise.
     """
-    if probability < 0 or probability > 100:
-        raise ValueError("probability must be between 0 and 100")
+    if not isinstance(probability, (int, float)):
+        raise ValueError("probability must be a float or an integer")
 
-    if not isinstance(probability, int):
-        raise ValueError("probability must be an integer")
+    if probability < 0.0 or probability > 100.0:
+        raise ValueError("probability must be between 0.0 and 100.0")
 
-    return random.randint(0, 100) < probability
+    return random.random() < (probability / 100.0)
 
 
-if sys.platform == "win32":
-    import msvcrt
+# The imports for msvcrt and select are already handled at the top of the file.
 
-    def kbhit():
-        """
-        Checks if a key is pressed without waiting for input.
+def is_key_pressed() -> bool:
+    """
+    Checks if a key is pressed without waiting for input.
 
-        Args:
-            None
+    Args:
+        None
 
-        Returns:
-            bool: True if a key is pressed, False otherwise.
-        """
+    Returns:
+        bool: True if a key is pressed, False otherwise.
+    """
+    if sys.platform == "win32":
         return msvcrt.kbhit()
-
-else:
-    import select
-
-    def kbhit():
-        """
-        Checks if a key is pressed without waiting for input.
-
-        Args:
-            None
-
-        Returns:
-            bool: True if a key is pressed, False otherwise.
-        """
-        return select.select([sys.stdin], [], [], 0)[0]
+    else:
+        return select.select([sys.stdin.fileno()], [], [], 0)[0]
