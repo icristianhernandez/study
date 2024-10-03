@@ -4,10 +4,10 @@ import sys
 from typing import Union
 
 if sys.platform == "win32":
-    import ctypes
-    import msvcrt
+    import ctypes  # used for changing the console text color
+    import msvcrt  # used for checking if a key is pressed
 else:
-    import select
+    import select  # used for checking if a key is pressed
 
 
 def clear_console_screen() -> None:
@@ -149,6 +149,7 @@ def check_probability(probability: Union[int, float]) -> bool:
 
 
 # The imports for msvcrt and select are already handled at the top of the file.
+
 
 def is_key_pressed() -> bool:
     """
