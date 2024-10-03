@@ -45,9 +45,6 @@ References:
     - https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
     - https://en.wikipedia.org/wiki/ANSI_escape_code
     - https://en.wikipedia.org/wiki/Escape_character
-    - https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-    - https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
-    - https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
 
 """
 
