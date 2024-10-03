@@ -1,3 +1,58 @@
+"""
+mymodule.py
+
+Utility functions for console I/O, random number generation, and keyboard input.
+
+Functions:
+    clear_console_screen: Clear the console screen on both Windows and non-Windows systems.
+    pause: Pause the execution until the user presses a key.
+    print_with_color: Print a string with the specified color on both Windows and non-Windows systems.
+    generate_random_int: Generate a random integer within the specified range.
+    check_probability: Return True with the specified probability.
+    is_key_pressed: Check if a key is pressed without waiting for input.
+    getch: Return a keyboard character after a key has been pressed.
+
+Example:
+    >>> from mymodule import *
+    >>> clear_console_screen()
+
+    >>> pause()
+
+    >>> print_with_color("Hello, World!", "red")
+
+    >>> generate_random_int(1, 10)
+    7
+
+    >>> check_probability(50)
+    True
+
+    >>> is_key_pressed()
+    False
+
+    >>> getch()
+    'a'
+
+References:
+    - https://docs.python.org/3/library/os.html
+    - https://docs.python.org/3/library/random.html
+    - https://docs.python.org/3/library/sys.html
+    - https://docs.python.org/3/library/ctypes.html
+    - https://docs.python.org/3/library/msvcrt.html
+    - https://docs.python.org/3/library/termios.html
+    - https://docs.python.org/3/library/fcntl.html
+    - https://docs.python.org/3/library/tty.html
+    - https://docs.python.org/3/library/select.html
+    - https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
+    - https://en.wikipedia.org/wiki/ANSI_escape_code
+    - https://en.wikipedia.org/wiki/Escape_character
+    - https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+    - https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_parameters
+    - https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
+
+"""
+
+__author__ = "Cristian Hernández"
+
 import os
 import random
 import sys
@@ -7,47 +62,66 @@ if sys.platform == "win32":
     import ctypes  # used for changing the console text color
     import msvcrt  # used for checking if a key is pressed
 else:
-    import termios
-    import fcntl
-    import tty
-    from select import select
+    import termios  # used for terminal I/O control
+    import fcntl  # used for file control
+    import tty  # used for terminal control
+    from select import select  # used for waiting for I/O completion
 
 
 def clear_console_screen() -> None:
     """
-    Clears the console screen on both Windows and non-Windows systems.
+    Clear the console screen on both Windows and non-Windows systems.
 
     Args:
         None
 
     Returns:
         None
+
+    Example:
+        >>> clear_console_screen()
+
+    Raises:
+        OSError: If the system command fails.
     """
-    if sys.platform == "win32":
-        os.system("cls")
-    else:
-        os.system("clear")
+    try:
+        if sys.platform == "win32":
+            os.system("cls")
+        else:
+            os.system("clear")
+    except OSError as e:
+        raise OSError(f"Failed to clear console screen: {e}")
 
 
 def pause() -> None:
     """
-    Pauses the execution until the user presses a key.
+    Pause the execution until the user presses a key.
 
     Args:
         None
 
     Returns:
         None
+
+    Example:
+        >>> pause()
+
+    Raises:
+        OSError: If the system command fails.
     """
-    if sys.platform == "win32":
-        os.system("pause")
-    else:
-        os.system("read -n 1 -s -r -p 'Press any key to continue...'")
+    try:
+        if sys.platform == "win32":
+            print("Press any key to continue...", end="", flush=True)
+            msvcrt.getch()
+        else:
+            os.system("read -n 1 -s -r -p 'Press any key to continue...'")
+    except OSError as e:
+        raise OSError(f"Failed to pause execution: {e}")
 
 
 def print_with_color(text: str, color: str) -> None:
     """
-    Prints a string with the specified color on both Windows and non-Windows systems.
+    Print a string with the specified color on both Windows and non-Windows systems.
 
     Args:
         text (str): The text to print.
@@ -56,15 +130,12 @@ def print_with_color(text: str, color: str) -> None:
     Returns:
         None
 
-    Note:
-        Available colors:
-        - red
-        - green
-        - blue
-        - yellow
-        - magenta
-        - cyan
-        - white
+    Example:
+        >>> print_with_color("Hello, World!", "red")
+
+    Raises:
+        ValueError: If text or color is not a string.
+        ValueError: If color is not a valid color.
     """
     if sys.platform == "win32":
         colors = {
@@ -109,12 +180,15 @@ def print_with_color(text: str, color: str) -> None:
         if color not in colors:
             raise ValueError("Invalid color")
 
-        print(colors[color] + text + "\033[0m")
+        try:
+            print(colors[color] + text)
+        finally:
+            print("\033[0m", end="")
 
 
 def generate_random_int(min_value: int, max_value: int) -> int:
     """
-    Generates a random integer within the specified range.
+    Generate a random integer within the specified range.
 
     Args:
         min_value (int): The minimum value.
@@ -122,6 +196,14 @@ def generate_random_int(min_value: int, max_value: int) -> int:
 
     Returns:
         int: A random integer within the specified range.
+
+    Example:
+        >>> generate_random_int(1, 10)
+        7
+
+    Raises:
+        ValueError: If min_value or max_value is not an integer.
+        ValueError: If min_value is greater than max_value.
     """
     if not isinstance(min_value, int) or not isinstance(max_value, int):
         raise ValueError("min_value and max_value must be integers")
@@ -134,13 +216,21 @@ def generate_random_int(min_value: int, max_value: int) -> int:
 
 def check_probability(probability: Union[int, float]) -> bool:
     """
-    Returns True with the specified probability.
+    Return True with the specified probability.
 
     Args:
-        probability (float): The probability of returning True (0.0-100.0).
+        probability (Union[int, float]): The probability of returning True (0.0-100.0).
 
     Returns:
         bool: True with the specified probability, False otherwise.
+
+    Example:
+        >>> check_probability(50)
+        True  # Approximately 50% of the time
+
+    Raises:
+        ValueError: If probability is not a float or an integer.
+        ValueError: If probability is not between 0.0 and 100.0.
     """
     if not isinstance(probability, (int, float)):
         raise ValueError("probability must be a float or an integer")
@@ -148,22 +238,35 @@ def check_probability(probability: Union[int, float]) -> bool:
     if probability < 0.0 or probability > 100.0:
         raise ValueError("probability must be between 0.0 and 100.0")
 
-    return random.random() < (probability / 100.0)
+    return random.uniform(0, 100) < probability
 
 
 def is_key_pressed(timeout: float = 0.1) -> bool:
     """
-    Checks if a key is pressed without waiting for input.
+    Check if a key is pressed without waiting for input.
 
     Args:
-        None
+        timeout (float): The time to wait for a key press in seconds. Default is 0.1 seconds.
 
     Returns:
         bool: True if a key is pressed, False otherwise.
+
+    Example:
+        >>> is_key_pressed()
+        False
+
+    Raises:
+        ValueError: If timeout is not a float or is negative.
     """
+    if not isinstance(timeout, float) or timeout < 0:
+        raise ValueError("timeout must be a non-negative float")
+
     if sys.platform == "win32":
         return msvcrt.kbhit()
     else:
+        if not sys.stdin.isatty():
+            return False
+
         fd = sys.stdin.fileno()
         old_term_settings = termios.tcgetattr(fd)
         new_term_settings = termios.tcgetattr(fd)
@@ -181,29 +284,42 @@ def is_key_pressed(timeout: float = 0.1) -> bool:
         except (OSError, IOError, ValueError):
             pass
         finally:
-            termios.tcsetattr(fd, termios.TCSAFLUSH, old_term_settings)
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_term_settings)
             fcntl.fcntl(fd, fcntl.F_SETFL, old_flags)
 
         return False
 
+
 def getch() -> str:
     """
-    Returns a keyboard character after a key has been pressed.
+    Return a keyboard character after a key has been pressed.
 
     Args:
         None
 
     Returns:
         str: The character of the key that was pressed.
+
+    Example:
+        >>> getch()
+        'a'
+
+    Raises:
+        OSError: If there is an error reading the key press.
     """
     if sys.platform == "win32":
         return msvcrt.getch().decode("utf-8")
     else:
+        if not sys.stdin.isatty():
+            raise OSError("sys.stdin is not a terminal")
+
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
             tty.setraw(fd)
             ch = sys.stdin.read(1)
+        except OSError as e:
+            raise OSError(f"Failed to read key press: {e}")
         finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            termios.tcsetattr(fd, termios.TCSANOW, old_settings)
         return ch
