@@ -7,7 +7,11 @@ if sys.platform == "win32":
     import ctypes  # used for changing the console text color
     import msvcrt  # used for checking if a key is pressed
 else:
-    import select  # used for checking if a key is pressed
+    import sys
+    import termios
+    import fcntl
+    import tty
+    from select import select
 
 
 def clear_console_screen() -> None:
@@ -148,9 +152,6 @@ def check_probability(probability: Union[int, float]) -> bool:
     return random.random() < (probability / 100.0)
 
 
-# The imports for msvcrt and select are already handled at the top of the file.
-
-
 def is_key_pressed() -> bool:
     """
     Checks if a key is pressed without waiting for input.
@@ -164,4 +165,44 @@ def is_key_pressed() -> bool:
     if sys.platform == "win32":
         return msvcrt.kbhit()
     else:
-        return select.select([sys.stdin.fileno()], [], [], 0)[0]
+        fd = sys.stdin.fileno()
+        oldterm = termios.tcgetattr(fd)
+        newattr = termios.tcgetattr(fd)
+        newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
+        termios.tcsetattr(fd, termios.TCSANOW, newattr)
+        oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
+        try:
+            rlist, _, _ = select([sys.stdin], [], [], 0.1)
+            if rlist:
+                c = sys.stdin.read(1)
+                if c:
+                    return True
+        finally:
+            termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
+            fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
+        return False
+
+
+def getch() -> str:
+    """
+    Returns a keyboard character after a key has been pressed.
+
+    Args:
+        None
+
+    Returns:
+        str: The character of the key that was pressed.
+    """
+    if sys.platform == "win32":
+        return msvcrt.getch().decode("utf-8")
+    else:
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
