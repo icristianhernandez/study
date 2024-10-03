@@ -7,7 +7,6 @@ if sys.platform == "win32":
     import ctypes  # used for changing the console text color
     import msvcrt  # used for checking if a key is pressed
 else:
-    import sys
     import termios
     import fcntl
     import tty
@@ -152,7 +151,7 @@ def check_probability(probability: Union[int, float]) -> bool:
     return random.random() < (probability / 100.0)
 
 
-def is_key_pressed() -> bool:
+def is_key_pressed(timeout: float = 0.1) -> bool:
     """
     Checks if a key is pressed without waiting for input.
 
@@ -166,23 +165,26 @@ def is_key_pressed() -> bool:
         return msvcrt.kbhit()
     else:
         fd = sys.stdin.fileno()
-        oldterm = termios.tcgetattr(fd)
-        newattr = termios.tcgetattr(fd)
-        newattr[3] = newattr[3] & ~termios.ICANON & ~termios.ECHO
-        termios.tcsetattr(fd, termios.TCSANOW, newattr)
-        oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
-        fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
-        try:
-            rlist, _, _ = select([sys.stdin], [], [], 0.1)
-            if rlist:
-                c = sys.stdin.read(1)
-                if c:
-                    return True
-        finally:
-            termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
-            fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
-        return False
+        old_term_settings = termios.tcgetattr(fd)
+        new_term_settings = termios.tcgetattr(fd)
+        new_term_settings[3] &= ~termios.ICANON & ~termios.ECHO
+        termios.tcsetattr(fd, termios.TCSANOW, new_term_settings)
+        old_flags = fcntl.fcntl(fd, fcntl.F_GETFL)
+        fcntl.fcntl(fd, fcntl.F_SETFL, old_flags | os.O_NONBLOCK)
 
+        try:
+            readable, _, _ = select([sys.stdin], [], [], timeout)
+            if readable:
+                key = sys.stdin.read(1)
+                if key:
+                    return True
+        except (OSError, IOError, ValueError):
+            pass
+        finally:
+            termios.tcsetattr(fd, termios.TCSAFLUSH, old_term_settings)
+            fcntl.fcntl(fd, fcntl.F_SETFL, old_flags)
+
+        return False
 
 def getch() -> str:
     """
@@ -200,9 +202,8 @@ def getch() -> str:
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
-            tty.setraw(sys.stdin.fileno())
+            tty.setraw(fd)
             ch = sys.stdin.read(1)
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
-
