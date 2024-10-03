@@ -4,13 +4,13 @@ mymodule.py
 Utility functions for console I/O, random number generation, and keyboard input.
 
 Functions:
-    clear_console_screen: Clear the console screen on both Windows and non-Windows systems.
-    pause: Pause the execution until the user presses a key.
-    print_with_color: Print a string with the specified color on both Windows and non-Windows systems.
-    generate_random_int: Generate a random integer within the specified range.
-    check_probability: Return True with the specified probability.
-    is_key_pressed: Check if a key is pressed without waiting for input.
-    getch: Return a keyboard character after a key has been pressed.
+    - clear_console_screen: Clear the console screen on both Windows and non-Windows systems.
+    - pause: Pause the execution until the user presses a key.
+    - print_with_color: Print a string with the specified color on both Windows and non-Windows systems.
+    - generate_random_int: Generate a random integer within the specified range.
+    - check_probability: Return True with the specified probability.
+    - is_key_pressed: Check if a key is pressed without waiting for input.
+    - getch: Return a keyboard character after a key has been pressed.
 
 Example:
     >>> from mymodule import *
@@ -148,7 +148,7 @@ def print_with_color(text: str, color: str) -> None:
             "white": 0x07,
         }
 
-        if not all(isinstance(arg, str) for arg in [text, color]):
+        if not isinstance(text, str) or not isinstance(color, str):
             raise ValueError("Both text and color must be strings")
 
         if color not in colors:
@@ -180,10 +180,7 @@ def print_with_color(text: str, color: str) -> None:
         if color not in colors:
             raise ValueError("Invalid color")
 
-        try:
-            print(colors[color] + text)
-        finally:
-            print("\033[0m", end="")
+        print(colors[color] + text + "\033[0m")
 
 
 def generate_random_int(min_value: int, max_value: int) -> int:
