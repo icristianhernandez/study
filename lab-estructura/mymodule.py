@@ -6,9 +6,10 @@ Utility functions for console I/O, random number generation, and keyboard input.
 Functions:
     - clear_console_screen: Clear the console screen on both Windows and non-Windows systems.
     - pause: Pause the execution until the user presses a key.
-    - print_with_color: Print a string with the specified color on both Windows and non-Windows systems.
+    - print_with_color: Print a string with the specified color (and background color) on both Windows and non-Windows systems.
     - generate_random_int: Generate a random integer within the specified range.
     - check_probability: Return True with the specified probability.
+    - flip_coin: Return True with a 50/50 chance.
     - is_key_pressed: Check if a key is pressed without waiting for input.
     - getch: Return a keyboard character after a key has been pressed.
 
@@ -116,23 +117,34 @@ def pause() -> None:
         raise OSError(f"Failed to pause execution: {e}")
 
 
-def print_with_color(text: str, color: str) -> None:
+def print_with_color(text: str, color: str, background_color: str = "null") -> None:
     """
-    Print a string with the specified color on both Windows and non-Windows systems.
+    Print a string with the specified color (and background color) on both Windows and non-Windows systems.
 
     Args:
         text (str): The text to print.
         color (str): The color code (e.g., 'red', 'green', 'blue').
+        background_color (str): The background color code (e.g., 'red', 'green', 'blue'). Default is None.
 
     Returns:
         None
 
     Example:
         >>> print_with_color("Hello, World!", "red")
+        # "Hello, World!" will be printed in red text
+
+        >>> print_with_color("Hello, World!", "red", "blue")
+        # "Hello, World!" will be printed in red text with a blue background
 
     Raises:
         ValueError: If text or color is not a string.
         ValueError: If color is not a valid color.
+        ValueError: If background_color is not a valid color.
+
+    Notes:
+        - If the background_color parameter is not specified, the background color will not be changed
+        - Avaible colors:
+            - red, green, blue, yellow, magenta, cyan, white
     """
     if sys.platform == "win32":
         colors = {
@@ -151,12 +163,34 @@ def print_with_color(text: str, color: str) -> None:
         if color not in colors:
             raise ValueError("Invalid color")
 
-        handle = ctypes.windll.kernel32.GetStdHandle(-11)
-        ctypes.windll.kernel32.SetConsoleTextAttribute(handle, colors[color])
-        print(text)
-        ctypes.windll.kernel32.SetConsoleTextAttribute(
-            handle, 0x07
-        )  # Reset to default color
+        if background_color != "null":
+            background_colors = {
+                "red": 0x40,
+                "green": 0x20,
+                "blue": 0x10,
+                "yellow": 0x60,
+                "magenta": 0x50,
+                "cyan": 0x30,
+                "white": 0x70,
+            }
+
+            if background_color not in background_colors:
+                raise ValueError("Invalid background color")
+
+            handle = ctypes.windll.kernel32.GetStdHandle(-11)
+            ctypes.windll.kernel32.SetConsoleTextAttribute(
+                handle, colors[color] | background_colors[background_color]
+            )
+        else:
+            handle = ctypes.windll.kernel32.GetStdHandle(-11)
+            ctypes.windll.kernel32.SetConsoleTextAttribute(handle, colors[color])
+
+        try:
+            print(text)
+        finally:
+            # Reset to default color
+            ctypes.windll.kernel32.SetConsoleTextAttribute(handle, 0x07)
+
     else:
         colors = {
             "red": "\033[91m",
@@ -177,7 +211,25 @@ def print_with_color(text: str, color: str) -> None:
         if color not in colors:
             raise ValueError("Invalid color")
 
-        print(colors[color] + text + "\033[0m")
+        if background_color != "null":
+            background_colors = {
+                "red": "\033[41m",
+                "green": "\033[42m",
+                "blue": "\033[44m",
+                "yellow": "\033[43m",
+                "magenta": "\033[45m",
+                "cyan": "\033[46m",
+                "white": "\033[47m",
+            }
+
+            if background_color not in background_colors:
+                raise ValueError("Invalid background color")
+
+            print(
+                colors[color] + background_colors[background_color] + text + "\033[0m"
+            )
+        else:
+            print(colors[color] + text + "\033[0m")
 
 
 def generate_random_int(min_value: int, max_value: int) -> int:
@@ -233,6 +285,23 @@ def check_probability(probability: Union[int, float]) -> bool:
         raise ValueError("probability must be between 0.0 and 100.0")
 
     return random.uniform(0, 100) < probability
+
+
+def flip_coin() -> bool:
+    """
+    Return True with a 50/50 chance.
+
+    Args:
+        None
+
+    Returns:
+        bool: True with a 50/50 chance, False otherwise.
+
+    Example:
+        >>> flip_coin()
+        True  # Approximately 50% of the time
+    """
+    return check_probability(50.0)
 
 
 def is_key_pressed(timeout: float = 0.1) -> bool:
