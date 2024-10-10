@@ -33,8 +33,7 @@ y entrarán y se irán personas continuamente.
         print_with_color(initial_msg, "magenta")
 
         while not is_key_pressed():
-            people_enter = check_probability(45)
-            people_leave = check_probability(85)
+            people_enter = flip_coin()
             status_msg = ""
             print_color = ""
 
@@ -56,7 +55,7 @@ y entrarán y se irán personas continuamente.
                 print_color = "yellow"
 
                 null_actions += 1
-            elif people_leave and ocuped_places > 0:
+            elif ocuped_places > 0:
                 status_msg = "    Salió(-) la persona número " + str(cola[inicio - 1])
                 print_color = "red"
 
@@ -64,7 +63,7 @@ y entrarán y se irán personas continuamente.
                 inicio = (inicio % cola_size) + 1
                 ocuped_places -= 1
                 leaved_people += 1
-            elif people_leave and ocuped_places == 0:
+            elif ocuped_places == 0:
                 status_msg = "    No salió ninguna persona por falta de personas."
                 print_color = "yellow"
 
@@ -76,7 +75,9 @@ y entrarán y se irán personas continuamente.
 
             print_with_color(status_msg, print_color)
 
-            time.sleep(1)
+            # time.sleep(1)
+            # random sleep
+            time.sleep(generate_random_decimal(0.5, 1.5))
 
         cola_representation = " ".join([str(x) for x in cola])
 
@@ -99,6 +100,17 @@ Resultado de la simulación:
         )
 
         print_with_color(final_msg, "magenta")
+
+        print_with_color("Limpiando la cola, se cierra la cola por hoy...", "yellow")
+        while ocuped_places > 0:
+            # print that we are clearing the queue
+            status_msg = "    Salió(-) la persona número " + str(cola[inicio - 1])
+            print_with_color(status_msg, "red")
+
+            cola[inicio - 1] = 0
+            inicio = (inicio % cola_size) + 1
+            ocuped_places -= 1
+            leaved_people += 1
 
         repeat = input("¿Desea repetir la simulación? (s/n): ").strip().lower()
         if repeat != "s":

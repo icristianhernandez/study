@@ -8,6 +8,7 @@ Functions:
     - pause: Pause the execution until the user presses a key.
     - print_with_color: Print a string with the specified color (and background color) on both Windows and non-Windows systems.
     - generate_random_int: Generate a random integer within the specified range.
+    - generate_random_decimal: Generate a random decimal within the specified range.
     - check_probability: Return True with the specified probability.
     - flip_coin: Return True with a 50/50 chance.
     - is_key_pressed: Check if a key is pressed without waiting for input.
@@ -258,6 +259,34 @@ def generate_random_int(min_value: int, max_value: int) -> int:
         raise ValueError("min_value must be less than or equal to max_value")
 
     return random.randint(min_value, max_value)
+
+
+def generate_random_decimal(min_value: float, max_value: float) -> float:
+    """
+    Generate a random decimal within the specified range.
+
+    Args:
+        min_value (float): The minimum value.
+        max_value (float): The maximum value.
+
+    Returns:
+        float: A random decimal within the specified range.
+
+    Example:
+        >>> generate_random_decimal(1.0, 10.0)
+        7.5
+
+    Raises:
+        ValueError: If min_value or max_value is not a float.
+        ValueError: If min_value is greater than max_value.
+    """
+    if not isinstance(min_value, float) or not isinstance(max_value, float):
+        raise ValueError("min_value and max_value must be floats")
+
+    if min_value > max_value:
+        raise ValueError("min_value must be less than or equal to max_value")
+
+    return random.uniform(min_value, max_value)
 
 
 def check_probability(probability: Union[int, float]) -> bool:
