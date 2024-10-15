@@ -13,6 +13,7 @@ Functions:
     - flip_coin: Return True with a 50/50 chance.
     - is_key_pressed: Check if a key is pressed without waiting for input.
     - getch: Return a keyboard character after a key has been pressed.
+    - safe_input: Safely get user input of the specified data type and validate it.
     - ask_for_input: Ask the user for an input of the specified data type. Can validate.
 
 Example:
