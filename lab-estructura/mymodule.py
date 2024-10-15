@@ -5,7 +5,7 @@ Utility functions for console I/O, random number generation, and keyboard input.
 
 Functions:
     - clear_console_screen: Clear the console screen on both Windows and non-Windows systems.
-    - pause: Pause the execution until the user presses a key.
+    - pause_console: Pause the execution until the user presses a key.
     - print_with_color: Print a string with the specified color (and background color) on both Windows and non-Windows systems.
     - generate_random_int: Generate a random integer within the specified range.
     - generate_random_decimal: Generate a random decimal within the specified range.
@@ -20,7 +20,7 @@ Example:
     >>> from mymodule import *
     >>> clear_console_screen()
 
-    >>> pause()
+    >>> pause_console()
 
     >>> print_with_color("Hello, World!", "red")
 
@@ -94,7 +94,7 @@ def clear_console_screen() -> None:
         raise OSError(f"Failed to clear console screen: {e}")
 
 
-def pause() -> None:
+def pause_console() -> None:
     """
     Pause the execution until the user presses a key.
 
@@ -105,7 +105,7 @@ def pause() -> None:
         None
 
     Example:
-        >>> pause()
+        >>> pause_console()
 
     Raises:
         OSError: If the system command fails.
@@ -117,7 +117,7 @@ def pause() -> None:
         else:
             os.system("read -n 1 -s -r -p 'Press any key to continue...'")
     except OSError as e:
-        raise OSError(f"Failed to pause execution: {e}")
+        raise OSError(f"Failed to pause_console console execution: {e}")
 
 
 def print_with_color(text: str, color: str, background_color: str = "null") -> None:
@@ -514,11 +514,111 @@ def ask_for_input(
     if not callable(validation_function):
         raise ValueError("validation_function must be callable")
 
-    print(prompt)
+    print(prompt, end="", flush=True)
     result = safe_input(data_type, validation_function, *args, **kwargs)
 
     while result is None:
-        print(re_ask_prompt)
+        print(re_ask_prompt, end="", flush=True)
         result = safe_input(data_type, validation_function, *args, **kwargs)
 
     return result
+
+
+# print_menu with extensible options
+class MenuOption:
+    def __init__(self, option_text: str, option_function: Callable[[], Any]):
+        self.text = option_text
+        self.action = option_function
+
+
+def print_menu(
+    menu_options: dict[str, MenuOption] = {},
+    menu_header: str = "Welcome.",
+    input_ask_msg: str = "Please enter an option: ",
+    re_ask_msg: str = "Invalid input. Please try again.",
+    use_default_exit: bool = True,
+) -> None:
+    """
+    Print a menu with the specified header and options.
+
+    Args:
+        menu_options (dict[str, MenuOption]): A dictionary of MenuOption objects representing the menu options.
+        menu_header (str): The header of the menu. Default is "Welcome.".
+        input_ask_msg (str): The message to display when asking for user input. Default is "Please enter an option: ".
+        re_ask_msg (str): The message to display when re-asking for input if the user input is invalid. Default is "Invalid input. Please try again.".
+        use_default_exit (bool): Whether to include a default exit option. Default is True.
+
+    Returns:
+        None
+
+    Example:
+        >>> def option1():
+        ...     print("Option 1 selected")
+        >>> def option2():
+        ...     print("Option 2 selected")
+        >>> menu_options = {"1": MenuOption("Option 1", option1), "2": MenuOption("Option 2", option2)}
+        >>> print_menu(menu_options, "Main Menu", "Select an option: ")
+    """
+
+    if not isinstance(menu_options, dict):
+        raise ValueError("menu_options must be a dictionary")
+
+    if not all(
+        isinstance(key, str) and isinstance(option, MenuOption)
+        for key, option in menu_options.items()
+    ):
+        raise ValueError(
+            "menu_options must contain only string keys and MenuOption objects"
+        )
+
+    if not isinstance(menu_header, str):
+        raise ValueError("menu_header must be a string")
+
+    if not isinstance(input_ask_msg, str):
+        raise ValueError("input_ask_msg must be a string")
+
+    if not isinstance(re_ask_msg, str):
+        raise ValueError("re_ask_msg must be a string")
+
+    if not isinstance(use_default_exit, bool):
+        raise ValueError("use_default_exit must be a boolean")
+
+    keep_running = True
+
+    def exit_action():
+        nonlocal keep_running
+        keep_running = False
+
+    exit_option = MenuOption("Exit", exit_action)
+
+    while keep_running:
+        clear_console_screen()
+
+        print(menu_header)
+
+        padding = "    "
+        for key, option in menu_options.items():
+            print(f"{padding}{key}. {option.text}")
+
+        if use_default_exit:
+            print(f"{padding}0. {exit_option.text}")
+
+        user_input = ask_for_input(
+            str,
+            input_ask_msg,
+            re_ask_msg,
+            lambda x: (
+                x == "0" or x in menu_options.keys()
+                if use_default_exit
+                else x in menu_options.keys()
+            ),
+        )
+
+        if use_default_exit and user_input == "0":
+            exit_option.action()
+        elif user_input in menu_options:
+            menu_options[user_input].action()
+        else:
+            print(re_ask_msg, end="", flush=True)
+
+        clear_console_screen()
