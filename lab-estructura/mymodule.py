@@ -13,6 +13,7 @@ Functions:
     - flip_coin: Return True with a 50/50 chance.
     - is_key_pressed: Check if a key is pressed without waiting for input.
     - getch: Return a keyboard character after a key has been pressed.
+    - ask_for_input: Ask the user for an input of the specified data type. Can validate.
 
 Example:
     >>> from mymodule import *
@@ -55,7 +56,7 @@ __author__ = "Cristian Hernández"
 import os
 import random
 import sys
-from typing import Union
+from typing import Union, Callable, Optional
 
 if sys.platform == "win32":
     import ctypes  # used for changing the console text color
@@ -415,3 +416,60 @@ def getch() -> str:
         finally:
             termios.tcsetattr(fd, termios.TCSANOW, old_settings)
         return ch
+
+
+def ask_for_input(
+    data_type: type,
+    prompt: str = "Enter input: ",
+    re_ask_prompt: str = "Invalid input. Please try again: ",
+    validation_function: Optional[Callable[..., bool]] = None,
+    *args,
+    **kwargs,
+) -> Union[int, float, str]:
+    """
+    Ask the user for an input of the specified data type.
+
+    Args:
+        data_type (type): The desired data type of the input (e.g., int, float, str).
+        prompt (str, optional): The prompt to display to the user. Default is "Enter input: ".
+        re_ask_prompt (str, optional): The prompt to display to the user if the input is invalid. Default is "Invalid input. Please try again: ".
+        validation_function (callable, optional): A function that takes the user input and returns a boolean indicating whether the input is valid. Default is None.
+        *args: Variable length argument list.
+        **kwargs: Arbitrary keyword arguments.
+
+    Returns:
+        Union[int, float, str]: The user input converted to the specified data type.
+
+    Example:
+        >>> ask_for_input(int, "Enter a number: ", "Invalid input. Enter a number: ")
+        Enter a number: 5
+        5
+
+        >>> ask_for_input(int, "Enter a number: ", "Invalid input. Enter a number: ")
+        Enter a number: abc
+        Invalid input. Enter a number: 5
+        5
+
+    Raises:
+        ValueError: If the input cannot be converted to the specified data type.
+    """
+    is_valid_input = False
+    user_input = ""
+
+    while not is_valid_input:
+        user_input = input(prompt)
+
+        try:
+            user_input = data_type(user_input)
+        except ValueError:
+            print(re_ask_prompt)
+            continue
+
+        if validation_function is None:
+            is_valid_input = True
+        elif validation_function(user_input, *args, **kwargs):
+            is_valid_input = True
+        else:
+            print(re_ask_prompt)
+
+    return user_input
