@@ -56,7 +56,7 @@ __author__ = "Cristian Hernández"
 import os
 import random
 import sys
-from typing import Union, Callable, Optional
+from typing import Union, Callable, Optional, Any
 
 if sys.platform == "win32":
     import ctypes  # used for changing the console text color
@@ -418,58 +418,106 @@ def getch() -> str:
         return ch
 
 
-def ask_for_input(
+def safe_input(
     data_type: type,
-    prompt: str = "Enter input: ",
-    re_ask_prompt: str = "Invalid input. Please try again: ",
-    validation_function: Optional[Callable[..., bool]] = None,
-    *args,
-    **kwargs,
-) -> Union[int, float, str]:
+    validation_function: Optional[Callable[..., bool]] = lambda x: True,
+    *args: Any,
+    **kwargs: Any,
+) -> Union[None, Any]:
     """
-    Ask the user for an input of the specified data type.
+    Safely get user input of the specified data type and validate it.
 
     Args:
         data_type (type): The desired data type of the input (e.g., int, float, str).
-        prompt (str, optional): The prompt to display to the user. Default is "Enter input: ".
-        re_ask_prompt (str, optional): The prompt to display to the user if the input is invalid. Default is "Invalid input. Please try again: ".
-        validation_function (callable, optional): A function that takes the user input and returns a boolean indicating whether the input is valid. Default is None.
-        *args: Variable length argument list.
-        **kwargs: Arbitrary keyword arguments.
+        validation_function (Optional[Callable[..., bool]]): A function that takes the user input and returns a boolean indicating whether the input is valid. Default is a function that always returns True.
+        *args (Any): Variable length argument list.
+        **kwargs (Any): Arbitrary keyword arguments.
 
     Returns:
-        Union[int, float, str]: The user input converted to the specified data type.
+        Union[None, Any]: The user input converted to the specified data type if valid, otherwise None.
 
     Example:
-        >>> ask_for_input(int, "Enter a number: ", "Invalid input. Enter a number: ")
+        >>> safe_input(int)
+        5
+
+        >>> safe_input(int)
+        None
+
+    Raises:
+        ValueError: If the input cannot be converted to the specified data type.
+    """
+    if not isinstance(data_type, type):
+        raise ValueError("data_type must be a type")
+
+    if not callable(validation_function):
+        raise ValueError("validation_function must be callable")
+
+    user_input = input()
+
+    try:
+        user_input = data_type(user_input)
+    except ValueError:
+        return None
+
+    if validation_function(user_input, *args, **kwargs):
+        return user_input
+
+    return None
+
+
+def ask_for_input(
+    data_type: type,
+    prompt: str = "Please enter a value: ",
+    re_ask_prompt: str = "Invalid input. Please try again: ",
+    validation_function: Optional[Callable[..., bool]] = lambda x: True,
+    *args: Any,
+    **kwargs: Any,
+) -> Any:
+    """
+    Ask the user for an input of the specified data type. Can validate.
+
+    Args:
+        data_type (type): The desired data type of the input (e.g., int, float, str).
+        prompt (str): The message to display to the user. Default is "Please enter a value:".
+        re_ask_prompt (str): The message to display to the user if the input is invalid. Default is "Invalid input. Please try again."
+        validation_function (Optional[Callable[..., bool]]): A function that takes the user input and returns a boolean indicating whether the input is valid. Default is a function that always returns True.
+        *args (Any): Variable length argument list.
+        **kwargs (Any): Arbitrary keyword arguments.
+
+    Returns:
+        Any: The user input converted to the specified data type.
+
+    Example:
+        >>> ask_for_input(int, "Enter a number:")
         Enter a number: 5
         5
 
-        >>> ask_for_input(int, "Enter a number: ", "Invalid input. Enter a number: ")
-        Enter a number: abc
-        Invalid input. Enter a number: 5
+        >>> ask_for_input(int, "Enter a number:", "Invalid input. Please try again.", lambda x: x > 0)
+        Enter a number: -5
+        Invalid input. Please try again.
+        Enter a number: 5
         5
 
     Raises:
         ValueError: If the input cannot be converted to the specified data type.
     """
-    is_valid_input = False
-    user_input = ""
+    if not isinstance(data_type, type):
+        raise ValueError("data_type must be a type")
 
-    while not is_valid_input:
-        user_input = input(prompt)
+    if not isinstance(prompt, str):
+        raise ValueError("prompt must be a string")
 
-        try:
-            user_input = data_type(user_input)
-        except ValueError:
-            print(re_ask_prompt)
-            continue
+    if not isinstance(re_ask_prompt, str):
+        raise ValueError("re_ask_prompt must be a string")
 
-        if validation_function is None:
-            is_valid_input = True
-        elif validation_function(user_input, *args, **kwargs):
-            is_valid_input = True
-        else:
-            print(re_ask_prompt)
+    if not callable(validation_function):
+        raise ValueError("validation_function must be callable")
 
-    return user_input
+    print(prompt)
+    result = safe_input(data_type, validation_function, *args, **kwargs)
+
+    while result is None:
+        print(re_ask_prompt)
+        result = safe_input(data_type, validation_function, *args, **kwargs)
+
+    return result
