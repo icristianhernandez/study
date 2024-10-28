@@ -1,0 +1,62 @@
+#########################################################################
+####### CORREGIR ########################################################
+#########################################################################
+
+Proceso Borrar. (Lista:primero, integer:elem); begin
+    *anterior = *actual = *primero;
+    if *primero = *Null then
+        write"Lista vacia");
+    else begin
+        (while (*actual <> Null) and (elem <> *actual.dato)
+        begin
+            *anterior = *actual
+            *actual = *actual.sig
+        end while
+        if actual == Null then
+            write("El numero no se encuentra en la Lista");
+        else:
+            if actual == primero then
+            begin:
+                primero = actual.sig;
+                delete(actual);
+                delete(anterior);
+            end
+            else:
+            begin:
+                anterior.sig = actual.sig;
+                delete(actual);
+                delete(anterior);
+            end
+
+
+
+#########################################################################
+####### MI CORRECIÓN ####################################################
+#########################################################################
+Proceso Borrar(Lista:primero, integer:elem); begin
+    *anterior = Null;
+    *actual = *primero;
+
+    if *primero == Null then begin
+        write("Lista vacía");
+    end
+    else begin
+        while (*actual <> Null) and (elem <> *actual.dato) do begin
+            *anterior = *actual;
+            *actual = *actual.sig;
+        end while
+
+        if *actual == Null then begin
+            write("El número no se encuentra en la Lista");
+        end
+        else begin
+            if *anterior == Null then
+                *primero = *actual.sig;
+            else
+                *anterior.sig = *actual.sig;
+            end
+
+            delete(*actual);
+        end
+    end
+end Borrar
