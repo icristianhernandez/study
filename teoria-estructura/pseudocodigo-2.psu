@@ -1,0 +1,100 @@
+##################################################################################
+### Corregir
+Proceso Insertar()
+if actual == Null then:
+    begin
+        anterior.sig=nuevo;
+        delete(anterior);
+        delete(nuevo);
+    end
+
+    if actual == primero then:
+        nuevo.sig = primero;
+        primero=nuevo;
+        delete(actual);
+        delete(anterior);
+        delete(nuevo);
+    else
+        begin
+            nuevo.sig=actual;
+            anterior.sig=nuevo;
+            delete(actual);
+            delete(anterior);
+            delete(nuevo);
+        end
+
+##################################################################################
+#### Correción mía
+        Proceso InsercionOrdenada(ListaNodo:primero, ListaNodo:nuevo) begin
+        *anterior = Null;
+        *actual = *primero;
+
+        while (*actual <> Null) and (*nuevo.dato > *actual.dato) do: begin
+        *anterior = *actual;
+        *actual = *actual.sig;
+        end while
+
+        if *actual <> Null then begin
+        -- what the teacher do is bad, so I fix that
+        *anterior.sig = *nuevo;
+        *nuevo.sig = *actual;
+        end
+        else begin
+        if *primero == Null then *begin
+        *primero = *nuevo;
+        end
+        else begin
+        *anterior.sig = *nuevo;
+        end
+        end
+        end InsercionOrdenada
+
+##################################################################################
+#### Correción de la profesora
+Proceso InsercionOrdenada(   )
+    *anterior = *actual = *primero;
+
+    if *primero = Null then:
+        *primero = *nuevo;
+
+    else: begin
+        while (*actual != Null) and (*nuevo.dato < actual.dato) do:
+        begin
+            *anterior = *actual;
+            *actual = *actual.sig;
+        end while
+
+        if actual == primero then:
+        begin:
+            nuevo.siguiente=actual;
+            primero=nuevo;
+        end
+        -- [Inventé, falta foto]
+        else
+        begin
+            nuevo.siguiente=actual;
+            anterior.siguiente=nuevo;
+        end
+    end
+end procedure
+
+
+##################################################################################
+### IA
+Proceso InsercionOrdenada(ListaNodo:primero, ListaNodo:nuevo) 
+    *anterior = Null;
+    *actual = *primero;
+
+    while (*actual <> Null) and (*nuevo.dato > *actual.dato) do: 
+        *anterior = *actual;
+        *actual = *actual.sig;
+    end while
+
+    if *anterior == Null then:
+        *nuevo.sig = *primero;
+        *primero = *nuevo;
+    else:
+        *nuevo.sig = *anterior.sig;
+        *anterior.sig = *nuevo;
+    end
+end InsercionOrdenada
