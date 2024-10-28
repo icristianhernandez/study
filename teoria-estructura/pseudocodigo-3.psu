@@ -34,12 +34,11 @@ Proceso Borrar. (Lista:primero, integer:elem); begin
 ####### MI CORRECIÓN ####################################################
 #########################################################################
 Proceso Borrar(Lista:primero, integer:elem); begin
-    *anterior = Null;
-    *actual = *primero;
+    *anterior = *actual = *primero;
 
     if *primero == Null then begin
         write("Lista vacía");
-    end
+    end if
     else begin
         while (*actual <> Null) and (elem <> *actual.dato) do begin
             *anterior = *actual;
@@ -48,11 +47,12 @@ Proceso Borrar(Lista:primero, integer:elem); begin
 
         if *actual == Null then begin
             write("El número no se encuentra en la Lista");
-        end
+        end if
         else begin
-            if *anterior == Null then
+            if *anterior == *primero then begin
                 *primero = *actual.sig;
-            else
+            end if
+            else begin
                 *anterior.sig = *actual.sig;
             end
 
@@ -60,3 +60,30 @@ Proceso Borrar(Lista:primero, integer:elem); begin
         end
     end
 end Borrar
+
+#########################################################################
+####### MI VERSIÓN ######################################################
+#########################################################################
+Proceso BorrarNodo(ListaNodo:primero, integer:elem); begin
+    *anterior = Null;
+    *actual = *primero;
+
+    while (*actual <> Null) and (elem <> *actual.dato) do begin
+        *anterior = *actual;
+        *actual = *actual.sig;
+    end while
+
+    if *actual == Null then begin
+        write("El número no se encuentra en la Lista o está vacía");
+    end if
+    else begin
+        if *anterior == Null then begin
+            *primero = *actual.sig;
+        end if
+        else begin
+            *anterior.sig = *actual.sig;
+        end
+
+        delete(*actual);
+    end
+end BorrarNodo
