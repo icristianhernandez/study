@@ -1,10 +1,28 @@
 #pragma once
 
-#include <cstdlib>
+#include <cstdlib>    // For system calls (consider portability alternatives)
+#include <functional> // For function pointers in menu_options
 #include <iostream>
 #include <limits>
+#include <map> // For menu_options (replace with unordered_map if performance is critical)
+#include <random>
+#include <string>
 
-using namespace std;
+using std::cerr;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::function;
+using std::map;
+using std::mt19937;
+using std::numeric_limits;
+using std::pair;
+using std::rand;
+using std::random_device;
+using std::streamsize;
+using std::string;
+using std::to_string;
+using std::uniform_int_distribution;
 
 inline void clearScreen() {
 #ifdef _WIN32
@@ -34,7 +52,38 @@ inline bool getAndValidateIntegerInput(int &input_int) {
     }
 }
 
-inline bool getAndvalidateStringInput(string &input_string) {
+/*inline pair<int, bool> getAndValidateIntegerInput() {*/
+/*    int input_int;*/
+/*    if (cin >> input_int) {*/
+/*        return {input_int, true};*/
+/*    } else {*/
+/*        cin.clear();*/
+/*        cin.ignore(numeric_limits<streamsize>::max(), '\n');*/
+/*        return {0, false};*/
+/*    }*/
+/*}*/
+// example of usage:
+// auto [input_int, valid_input] = getAndValidateIntegerInput();
+
+// without using auto:
+// int input_int;
+// bool valid_input;
+// tie(input_int, valid_input) = getAndValidateIntegerInput();
+
+template <typename T> inline pair<T, bool> getAndValidateInput() {
+    T input;
+    if (cin >> input) {
+        return {input, true};
+    } else {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return {T(), false};
+    }
+}
+// example of usage:
+// auto [input_int, valid_input] = getAndValidateInput<int>();
+
+inline bool getAndValidateStringInput(string &input_string) {
     if (cin >> input_string) {
         return true;
     } else {
@@ -96,16 +145,24 @@ Reset: \033[0m
  *   - 6: Cyan
  *   - 7: White
  */
-inline void printColoredString(const std::string &str, int color_code) {
-    std::string color_escape = "\033[3";
-    color_escape += std::to_string(color_code);
+inline void printColoredString(const string &str, const int &color_code) {
+    if (color_code < 0 || color_code > 7) {
+        cerr << "Invalid color code. Valid range is 0-7." << endl;
+        return;
+    }
+
+    string color_escape = "\033[3";
+    color_escape += to_string(color_code);
     color_escape += 'm';
 
-    std::cout << color_escape << str << "\033[0m"; // Reset to default color
+    cout << color_escape << str << "\033[0m"; // Reset to default color
 }
 
 inline int getRandomInt(int min, int max) {
-    return rand() % (max - min + 1) + min;
+    static random_device rd;
+    static mt19937 gen(rd());
+    uniform_int_distribution<> dis(min, max);
+    return dis(gen);
 }
 
 inline bool fiftyProb() { return getRandomInt(1, 2) == 1; }
@@ -151,25 +208,29 @@ int main() {
 // TODO: Add utility to print in a color
 // TODO: Define if I going to programming in windows or linux, and of what way
 
-#include <cstdlib>    // For system calls (consider portability alternatives)
-#include <functional> // For function pointers in menu_options
-#include <iostream>
-#include <limits>
-#include <map> // For menu_options (replace with unordered_map if performance is critical)
-#include <string>
-
-using namespace std;
-
 // Function type alias for menu options
+// MenuFunction represents a function that takes no arguments and returns void.
 using MenuFunction = function<void()>;
 
 // Menu option structure
+// Represents an option in the menu with its display text and associated
+// function.
 struct MenuOption {
     string option_text;
     MenuFunction function;
 };
 
-// Create a menu with header, options, and prompt messages
+inline void display_menu_header(const string &menu_header_msg,
+                                const map<int, MenuOption> &menu_options) {
+    clearScreen();
+    cout << menu_header_msg << endl;
+
+    for (const auto &[option_number, menu_option] : menu_options) {
+        cout << menu_option.option_text << endl;
+    }
+    cout << "0. Salir" << endl;
+}
+
 inline void display_menu(const string &menu_header_msg,
                          const map<int, MenuOption> &menu_options,
                          const string &ask_option_msg) {
@@ -183,14 +244,7 @@ inline void display_menu(const string &menu_header_msg,
     string invalid_input_msg = "\nOpción inválida. Introduzca nuevamente: ";
 
     while (is_running) {
-        clearScreen();
-        cout << menu_header_msg << endl;
-
-        for (const auto &[option_number, menu_option] : menu_options) {
-            cout << menu_option.option_text << endl;
-        }
-        cout << "0. Salir" << endl;
-
+        display_menu_header(menu_header_msg, menu_options);
         cout << (last_input_was_invalid ? invalid_input_msg : ask_option_msg);
 
         int selected_option;
@@ -217,8 +271,6 @@ inline void display_menu(const string &menu_header_msg,
 //////////////////////////////////////////////////
 /// GENERIC KBHIT IMPLEMENTATION /
 /////////////////////////////////////////////////
-
-#pragma once
 
 #ifndef KBHIT_H
 #define KBHIT_H
