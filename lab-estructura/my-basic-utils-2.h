@@ -34,8 +34,10 @@ inline void clearScreen() {
 
 inline void pauseScreen() {
 #ifdef _WIN32
+    cout << endl;
     system("pause");
 #else
+    cout << endl;
     cout << "Press Enter to continue...";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.get();
@@ -90,6 +92,21 @@ inline bool getAndValidateStringInput(string &input_string) {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         return false;
+    }
+}
+
+template <typename T>
+inline pair<T, bool> askValidInput(const function<bool(const T &)> &check =
+                                       [](const T &) { return true; }) {
+    T input;
+
+    if (cin >> input && check(input)) {
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return {input, true};
+    } else {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return {T(), false};
     }
 }
 
