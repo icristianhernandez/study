@@ -44,81 +44,60 @@ inline void pauseScreen() {
 #endif
 }
 
-inline bool getAndValidateIntegerInput(int &input_int) {
-    if (cin >> input_int) {
-        return true;
-    } else {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return false;
-    }
-}
-
-/*inline pair<int, bool> getAndValidateIntegerInput() {*/
-/*    int input_int;*/
-/*    if (cin >> input_int) {*/
-/*        return {input_int, true};*/
+/*template <typename T>*/
+/*inline pair<T, bool> askValidInput(const function<bool(const T &)> &check =*/
+/*                                       [](const T &) { return true; }) {*/
+/*    T input;*/
+/**/
+/*    if (cin >> input && check(input)) {*/
+/*        cin.ignore(numeric_limits<streamsize>::max(), '\n');*/
+/*        return {input, true};*/
 /*    } else {*/
 /*        cin.clear();*/
 /*        cin.ignore(numeric_limits<streamsize>::max(), '\n');*/
-/*        return {0, false};*/
+/*        return {T(), false};*/
 /*    }*/
 /*}*/
-// example of usage:
-// auto [input_int, valid_input] = getAndValidateIntegerInput();
 
+template <typename T> inline pair<T, bool> safeInput() {
+    T input;
+
+    if (cin >> input) {
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return {input, true};
+    } else {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return {T(), false};
+    }
+}
+// example of usage:
+// auto [input_int, valid_input] = safeInput<int>();
 // without using auto:
 // int input_int;
 // bool valid_input;
-// tie(input_int, valid_input) = getAndValidateIntegerInput();
+// tie(input_int, valid_input) = safeInput();
 
-template <typename T> inline pair<T, bool> getAndValidateInput() {
-    T input;
-    if (cin >> input) {
-        return {input, true};
-    } else {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return {T(), false};
+template <typename T>
+T askValidInput(
+    const string &reask_msg = "Input inválido. Intente nuevamente: ",
+    const function<bool(const T &)> &check = [](const T &) { return true; }) {
+
+    while (true) {
+        auto [input, valid_input] = safeInput<T>();
+
+        if (valid_input && check(input)) {
+            return input;
+        }
+
+        cout << reask_msg;
     }
 }
 // example of usage:
-// auto [input_int, valid_input] = getAndValidateInput<int>();
+// int input_int = askValidInput<int>("Introduzca un número entero: ");
 
-inline bool getAndValidateStringInput(string &input_string) {
-    if (cin >> input_string) {
-        return true;
-    } else {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return false;
-    }
-}
-
-template <typename T>
-inline pair<T, bool> askValidInput(const function<bool(const T &)> &check =
-                                       [](const T &) { return true; }) {
-    T input;
-
-    if (cin >> input && check(input)) {
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return {input, true};
-    } else {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return {T(), false};
-    }
-}
-
-inline bool isValidInput() {
-    if (cin.fail()) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return false;
-    } else {
-        return true;
-    }
-}
+// with a custom check for greater than 0:
+// int input_int = askValidInput<int>("Introduzca un número entero positivo: ",
 
 /*
 Foreground colors:
@@ -264,8 +243,7 @@ inline void display_menu(const string &menu_header_msg,
         display_menu_header(menu_header_msg, menu_options);
         cout << (last_input_was_invalid ? invalid_input_msg : ask_option_msg);
 
-        int selected_option;
-        bool valid_input = getAndValidateIntegerInput(selected_option);
+        auto [selected_option, valid_input] = safeInput<int>();
         bool valid_option =
             (selected_option == 0 || menu_options.count(selected_option));
 
