@@ -98,6 +98,7 @@ T askValidInput(
 
 // with a custom check for greater than 0:
 // int input_int = askValidInput<int>("Introduzca un número entero positivo: ",
+//                                  [](const int &input) { return input > 0; });
 
 /*
 Foreground colors:
