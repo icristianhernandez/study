@@ -12,6 +12,9 @@ La aplicación debe tener las siguientes características:
 
 #include "my-basic-utils-2.h"
 #include <iomanip>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 using namespace std;
 
@@ -331,15 +334,17 @@ void addEmployee(EmployeeNode *&employee_list,
 
     cout << "Cumpleaños (YYYY-MM-DD): ";
     auto [birthday_input, birthday_valid] = askValidDate();
+    birthday_input.year += 16;
     while (!birthday_valid || isDateGreater(birthday_input, enter_date)) {
         if (!birthday_valid) {
             cout << "Fecha inválida. Por favor, introduzca una fecha válida: ";
         } else {
-            cout << "La fecha de cumpleaños debe ser anterior a la fecha de "
-                    "ingreso. ";
+            cout << "Debe ser mayor de 16 años";
         }
         tie(birthday_input, birthday_valid) = askValidDate();
+        birthday_input.year += 16;
     }
+    birthday_input.year -= 16;
     birthday = birthday_input;
 
     cout << "Fecha de última promoción (YYYY-MM-DD): ";
@@ -699,6 +704,10 @@ void viewList(EmployeeNode *employee_list,
 // - Search by salary, id, date range
 // - View list
 int main() {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#endif
+
     EmployeeNode *employee_list = nullptr;
     LinkedListActions<EmployeeNode> employee_actions;
 
