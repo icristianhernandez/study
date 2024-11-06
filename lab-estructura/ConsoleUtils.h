@@ -93,15 +93,35 @@ inline void clearConsole() {
  * pauseConsole();
  * \endcode
  */
+#ifdef _WIN32
+#else
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 inline void pauseConsole() {
 #ifdef _WIN32
-    cout << endl;
     system("pause");
 #else
-    cout << endl;
-    cout << "Press Enter to continue...";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    cin.get();
+    std::cout << "Press any key to continue..." << std::flush;
+
+    // Save terminal settings
+    struct termios oldt, newt;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+
+    // Disable canonical mode and echo
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+
+    // Wait for a single character input
+    char ch;
+    read(STDIN_FILENO, &ch, 1);
+
+    // Restore terminal settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+
+    std::cout << std::endl; // Move to the next line
 #endif
 }
 
@@ -125,7 +145,14 @@ template <typename T> inline pair<T, bool> readSafeInput() {
 
     if (getline(cin, line)) {
         istringstream iss(line);
-        if (iss >> input && iss.eof()) {
+        if constexpr (std::is_same_v<T, std::string>) {
+            return pair<T, bool>(line, true);
+        } else if (iss >> input) {
+            // Check if there are any remaining characters in the stream
+            string remaining;
+            if (iss >> remaining) {
+                return pair<T, bool>(T(), false);
+            }
             return pair<T, bool>(input, true);
         }
     }
@@ -308,6 +335,8 @@ inline void displayUserMenu(
             cout << invalid_input_msg;
         }
     }
+
+    clearConsole();
 }
 
 //////////////////////////////////////////////////
