@@ -3,9 +3,11 @@
 // color. The simulation runs until the user presses a key, at which point it
 // displays the total number of plates and their distribution by color.
 
-#include "generic-menu.h"
-#include "kbhit.h"
-#include "my-basic-utils.h"
+/*#include "generic-menu.h"*/
+/*#include "kbhit.h"*/
+/*#include "my-basic-utils.h"*/
+
+#include "my-basic-utils-2.h"
 
 #include <chrono>
 #include <cstdlib>
