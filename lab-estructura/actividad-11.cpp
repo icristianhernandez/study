@@ -1,16 +1,18 @@
 /*
-Lab de Datos 7: Introducción a Arboles 
+Lab de Datos 7: Introducción a Arboles
 
-Se requiere realice un programa  que dada la definición 
+Se requiere realice un programa  que dada la definición
 struct arbol{
 int dato;
 arbol *izq, *c1, *der;
 }*rec,*raíz,*nuevo
-                     
-1) Almacene una secuencia dada de números en el cual cada nodo contenga los  descendientes especificados en el registro,  si la secuencia de datos lo permite. 
-2) Muestre el árbol resultante 
+
+1) Almacene una secuencia dada de números en el cual cada nodo contenga los
+descendientes especificados en el registro,  si la secuencia de datos lo
+permite.
+2) Muestre el árbol resultante
 3) Calcule la altura del árbol resultante
-4) Muestre las hojas del árbol resultante 
+4) Muestre las hojas del árbol resultante
 
 *Recuerden el uso estricto de  los apuntadores *raiz, *rec y *nuevo
  */
@@ -23,19 +25,19 @@ arbol *izq, *c1, *der;
 
 using namespace std;
 
-const string &ROOT_PREFIX = "";
-const string &BRANCH_WITH_SIBLING = "├── ";
-const string &BRANCH_LAST = "└── ";
-const string &VERTICAL_LINE = "│   ";
-const string &SPACE = "    ";
-const string &EXIT_KEY = "q";
-const string &LEAFS_SEPARATOR = " ";
-const string &LEAFS_LEVELS = "    Nivel ";
-const string &LEAFS_PREFIX = ": [";
-const string &LEAFS_SUFIX = "]\n";
-const string &TREE_LABEL = "Árbol:";
-const string &EMPTY_TREE = "    [Árbol vacío]";
-const string &NONE_LEAFS = "    [Ninguno]";
+constexpr const char *ROOT_PREFIX = "";
+constexpr const char *BRANCH_WITH_SIBLING = "├── ";
+constexpr const char *BRANCH_LAST = "└── ";
+constexpr const char *VERTICAL_LINE = "│   ";
+constexpr const char *SPACE = "    ";
+constexpr const char *EXIT_KEY = "q";
+constexpr const char *LEAFS_SEPARATOR = " ";
+constexpr const char *LEAFS_LEVELS = "    Nivel ";
+constexpr const char *LEAFS_PREFIX = ": [";
+constexpr const char *LEAFS_SUFIX = "]\n";
+constexpr const char *TREE_LABEL = "Árbol:";
+constexpr const char *EMPTY_TREE = "    [Árbol vacío]";
+constexpr const char *NONE_LEAFS = "    [Ninguno]";
 
 struct TreeNode {
     int value;
@@ -46,16 +48,20 @@ struct TreeNode {
           rightChild(nullptr) {}
 };
 
-bool strIsNumber(const string &str) {
-    if (str.empty() || str.find_first_not_of("0123456789") != string::npos) {
+bool strIsValidInt(const string &str) {
+    if (str.empty()) {
         return false;
     }
-    try {
-        long long num = stoll(str);
-        return num <= INT_MAX;
-    } catch (...) {
-        return false;
+
+    for (char character : str) {
+        if (!isdigit(character)) {
+            return false;
+        }
     }
+
+    long long value = std::stoll(str);
+    bool noOverflowed = value >= INT_MIN && value <= INT_MAX;
+    return noOverflowed;
 }
 
 void printTree(const unique_ptr<TreeNode> &node, const string &prefix = "",
@@ -212,11 +218,11 @@ int main(int argc, char *argv[]) {
         }
 
         cout << endl << endl;
-        cout << "Ingrese un valor para agregar al árbol ('" << EXIT_KEY
+        cout << "Ingrese un entero para agregar al árbol ('" << EXIT_KEY
              << "' para salir): ";
         string user_input = promptValidInput<string>(
-            "Valor Inválido. Ingrese nuevamente: ", [](const string &input) {
-                return input == EXIT_KEY || strIsNumber(input);
+            "Entero Inválido. Ingrese nuevamente: ", [](const string &input) {
+                return input == EXIT_KEY || strIsValidInt(input);
             });
 
         if (user_input == EXIT_KEY) {
