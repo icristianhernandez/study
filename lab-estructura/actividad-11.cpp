@@ -3,9 +3,9 @@
 
 #include "ConsoleUtils.h"
 #include <climits>
+#include <map>
 #include <memory>
 #include <string>
-#include <map>
 
 using namespace std;
 
@@ -15,8 +15,13 @@ const string &BRANCH_LAST = "└── ";
 const string &VERTICAL_LINE = "│   ";
 const string &SPACE = "    ";
 const string &EXIT_KEY = "q";
-int MAX_LEVEL = 0;
-int NEXT_FILL_LEVEL = 0;
+const string &LEAFS_SEPARATOR = " ";
+const string &LEAFS_LEVELS = "    Nivel ";
+const string &LEAFS_PREFIX = ": [";
+const string &LEAFS_SUFIX = "]\n";
+const string &TREE_LABEL = "Árbol:";
+const string &EMPTY_TREE = "    [Árbol vacío]";
+const string &NONE_LEAFS = "    [Ninguno]";
 
 struct TreeNode {
     int value;
@@ -63,13 +68,14 @@ bool isLeaf(const unique_ptr<TreeNode> &node) {
            node->rightChild == nullptr;
 }
 
-void collectLeafNodesWithLevel(const unique_ptr<TreeNode>& node, map<int, string>& levelMap, int level = 0) {
+void collectLeafNodesWithLevel(const unique_ptr<TreeNode> &node,
+                               map<int, string> &levelMap, int level = 0) {
     if (node == nullptr) {
         return;
     }
 
     if (isLeaf(node)) {
-        levelMap[level] += to_string(node->value) + " ";
+        levelMap[level] += to_string(node->value) + LEAFS_SEPARATOR;
         return;
     }
 
@@ -78,7 +84,7 @@ void collectLeafNodesWithLevel(const unique_ptr<TreeNode>& node, map<int, string
     collectLeafNodesWithLevel(node->rightChild, levelMap, level + 1);
 }
 
-string getLeafNodes(const unique_ptr<TreeNode>& node) {
+string getLeafNodes(const unique_ptr<TreeNode> &node) {
     if (node == nullptr) {
         return "";
     }
@@ -87,12 +93,14 @@ string getLeafNodes(const unique_ptr<TreeNode>& node) {
     collectLeafNodesWithLevel(node, levelMap);
 
     string result;
-    for (const auto& [level, nodes] : levelMap) {
+    for (const auto &[level, nodes] : levelMap) {
         string nodesStr = nodes;
         if (!nodesStr.empty() && nodesStr.back() == ' ') {
             nodesStr.pop_back();
         }
-        result += "    Nivel " + to_string(level) + ": [" + nodesStr + "]\n";
+
+        result += LEAFS_LEVELS + to_string(level) + LEAFS_PREFIX + nodesStr +
+                  LEAFS_SUFIX;
     }
     return result;
 }
@@ -159,15 +167,17 @@ int main(int argc, char *argv[]) {
 
     bool isRunning = true;
     unique_ptr<TreeNode> root = nullptr;
+    int max_level = getTreeMaxLevel(root);
+    int next_fill_level = getTreeNextFillLevel(root);
 
     while (isRunning) {
         clearConsole();
 
-        cout << "Árbol:" << endl;
+        cout << TREE_LABEL << endl;
         if (root != nullptr) {
             printTree(root, ROOT_PREFIX);
         } else {
-            cout << "    [Árbol vacío]" << endl;
+            cout << EMPTY_TREE << endl;
         }
 
         cout << endl;
@@ -175,13 +185,13 @@ int main(int argc, char *argv[]) {
         cout << "Valor de nodos sin hijos por nivel: " << endl;
         string leafNodes = getLeafNodes(root);
         if (leafNodes.empty()) {
-            cout << "    [Ninguno]" << endl;
+            cout << NONE_LEAFS << endl;
         } else {
             cout << leafNodes;
         }
 
         if (nullptr != root) {
-            cout << "El árbol tiene una altura de: " << MAX_LEVEL << endl;
+            cout << "El árbol tiene una altura de: " << max_level << endl;
         } else {
             cout << "El árbol no tiene altura. No está creado." << endl;
         }
@@ -197,9 +207,9 @@ int main(int argc, char *argv[]) {
         if (user_input == EXIT_KEY) {
             isRunning = false;
         } else {
-            insertNode(root, stoi(user_input), NEXT_FILL_LEVEL);
-            MAX_LEVEL = getTreeMaxLevel(root);
-            NEXT_FILL_LEVEL = getTreeNextFillLevel(root);
+            insertNode(root, stoi(user_input), next_fill_level);
+            max_level = getTreeMaxLevel(root);
+            next_fill_level = getTreeNextFillLevel(root);
         }
     }
 
