@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
             cout << leafNodes;
         }
 
-        if (nullptr != root) {
+        if (root != nullptr) {
             cout << "El árbol tiene una altura de: " << max_level << endl;
         } else {
             cout << "El árbol no tiene altura. No está creado." << endl;
