@@ -5,6 +5,7 @@
 #include <climits>
 #include <memory>
 #include <string>
+#include <map>
 
 using namespace std;
 
@@ -62,17 +63,38 @@ bool isLeaf(const unique_ptr<TreeNode> &node) {
            node->rightChild == nullptr;
 }
 
-string getLeafNodes(const unique_ptr<TreeNode> &node) {
+void collectLeafNodesWithLevel(const unique_ptr<TreeNode>& node, map<int, string>& levelMap, int level = 0) {
+    if (node == nullptr) {
+        return;
+    }
+
+    if (isLeaf(node)) {
+        levelMap[level] += to_string(node->value) + " ";
+        return;
+    }
+
+    collectLeafNodesWithLevel(node->leftChild, levelMap, level + 1);
+    collectLeafNodesWithLevel(node->centerChild, levelMap, level + 1);
+    collectLeafNodesWithLevel(node->rightChild, levelMap, level + 1);
+}
+
+string getLeafNodes(const unique_ptr<TreeNode>& node) {
     if (node == nullptr) {
         return "";
     }
 
-    if (isLeaf(node)) {
-        return to_string(node->value) + " ";
-    }
+    map<int, string> levelMap;
+    collectLeafNodesWithLevel(node, levelMap);
 
-    return getLeafNodes(node->leftChild) + getLeafNodes(node->centerChild) +
-           getLeafNodes(node->rightChild);
+    string result;
+    for (const auto& [level, nodes] : levelMap) {
+        string nodesStr = nodes;
+        if (!nodesStr.empty() && nodesStr.back() == ' ') {
+            nodesStr.pop_back();
+        }
+        result += "    Nivel " + to_string(level) + ": [" + nodesStr + "]\n";
+    }
+    return result;
 }
 
 int getTreeMaxLevel(const unique_ptr<TreeNode> &node) {
@@ -150,21 +172,19 @@ int main(int argc, char *argv[]) {
 
         cout << endl;
         cout << "Información:" << endl;
-        cout << "Valor de nodos sin hijos: " << endl;
+        cout << "Valor de nodos sin hijos por nivel: " << endl;
         string leafNodes = getLeafNodes(root);
         if (leafNodes.empty()) {
-            cout << "    [Ninguno]";
+            cout << "    [Ninguno]" << endl;
         } else {
-            cout << ("    [" + leafNodes + "]") << endl;
+            cout << leafNodes;
         }
 
-        cout << endl;
         if (nullptr != root) {
             cout << "El árbol tiene una altura de: " << MAX_LEVEL << endl;
         } else {
             cout << "El árbol no tiene altura. No está creado." << endl;
         }
-        cout << "Rellenar en: " << NEXT_FILL_LEVEL << endl;
 
         cout << endl << endl;
         cout << "Ingrese un valor para agregar al árbol ('" << EXIT_KEY
