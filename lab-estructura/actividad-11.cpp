@@ -68,7 +68,7 @@ string getLeafNodes(const unique_ptr<TreeNode> &node) {
     }
 
     if (isLeaf(node)) {
-        return to_string(node->value);
+        return to_string(node->value) + " ";
     }
 
     return getLeafNodes(node->leftChild) + getLeafNodes(node->centerChild) +
@@ -162,12 +162,13 @@ int main(int argc, char *argv[]) {
         }
 
         cout << endl;
-        cout << "Valor de nodos sin hijos: ";
+        cout << "Información:" << endl;
+        cout << "Valor de nodos sin hijos: " << endl;
         string leafNodes = getLeafNodes(root);
         if (leafNodes.empty()) {
-            leafNodes = "[Ninguno]";
+            cout << "    [Ninguno]";
         } else {
-            leafNodes = "    [" + leafNodes + "]";
+            cout << ("    [" + leafNodes + "]") << endl;
         }
 
         cout << endl;
