@@ -40,6 +40,7 @@
 #include <functional> // For function pointers in menu_options
 #include <iostream>
 #include <limits>
+#include <locale> // For setting locale to UTF-8
 #include <random>
 #include <sstream>
 #include <string>
@@ -403,3 +404,19 @@ inline int checkKeyPress() {
 }
 
 #endif // KBHIT_H
+
+/**
+ * @brief Enables UTF-8 output in the console.
+ * @details This function sets the console output to UTF-8 encoding.
+ * @example
+ * \code
+ * enableUTF8Output();
+ * \endcode
+ */
+inline void enableUTF8Output() {
+#ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+#else
+    std::setlocale(LC_ALL, "en_US.UTF-8");
+#endif
+}
