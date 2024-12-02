@@ -108,39 +108,25 @@ int getTreeNextFillLevel(const unique_ptr<TreeNode> &node) {
 
 bool insertNode(unique_ptr<TreeNode> &node, const int &nodeValue,
                 const int &levelToFill, int currentLevel = 0) {
-    if (currentLevel == levelToFill) {
-        if (node == nullptr) {
+    if (node == nullptr) {
+        if (currentLevel == levelToFill) {
             node = make_unique<TreeNode>(nodeValue);
             return true;
         }
+
         return false;
     }
 
-    if (node == nullptr) {
-        return false;
+    if (insertNode(node->leftChild, nodeValue, levelToFill, currentLevel + 1)) {
+        return true;
     }
 
-    if (currentLevel + 1 == levelToFill) {
-        if (node->leftChild == nullptr) {
-            node->leftChild = make_unique<TreeNode>(nodeValue);
-            return true;
-        }
-        if (node->centerChild == nullptr) {
-            node->centerChild = make_unique<TreeNode>(nodeValue);
-            return true;
-        }
-        if (node->rightChild == nullptr) {
-            node->rightChild = make_unique<TreeNode>(nodeValue);
-            return true;
-        }
-        return false;
+    if (insertNode(node->centerChild, nodeValue, levelToFill,
+                   currentLevel + 1)) {
+        return true;
     }
 
-    return insertNode(node->leftChild, nodeValue, levelToFill,
-                      currentLevel + 1) ||
-           insertNode(node->centerChild, nodeValue, levelToFill,
-                      currentLevel + 1) ||
-           insertNode(node->rightChild, nodeValue, levelToFill,
+    return insertNode(node->rightChild, nodeValue, levelToFill,
                       currentLevel + 1);
 }
 
@@ -180,7 +166,7 @@ int main(int argc, char *argv[]) {
         }
         cout << "Rellenar en: " << NEXT_FILL_LEVEL << endl;
 
-        cout << endl;
+        cout << endl << endl;
         cout << "Ingrese un valor para agregar al árbol ('" << EXIT_KEY
              << "' para salir): ";
         string user_input = promptValidInput<string>(
