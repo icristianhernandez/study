@@ -147,6 +147,7 @@ bool insertNode(unique_ptr<TreeNode> &node, const int &nodeValue,
 int main(int argc, char *argv[]) {
     (void)argc;
     (void)argv;
+    enableUTF8Output();
 
     bool isRunning = true;
     unique_ptr<TreeNode> root = nullptr;
