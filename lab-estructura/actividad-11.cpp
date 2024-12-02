@@ -1,4 +1,18 @@
 /*
+Lab de Datos 7: Introducción a Arboles 
+
+Se requiere realice un programa  que dada la definición 
+struct arbol{
+int dato;
+arbol *izq, *c1, *der;
+}*rec,*raíz,*nuevo
+                     
+1) Almacene una secuencia dada de números en el cual cada nodo contenga los  descendientes especificados en el registro,  si la secuencia de datos lo permite. 
+2) Muestre el árbol resultante 
+3) Calcule la altura del árbol resultante
+4) Muestre las hojas del árbol resultante 
+
+*Recuerden el uso estricto de  los apuntadores *raiz, *rec y *nuevo
  */
 
 #include "ConsoleUtils.h"
