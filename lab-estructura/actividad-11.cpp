@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 
         cout << endl;
         cout << "Información:" << endl;
-        cout << "Valor de nodos sin hijos por nivel: " << endl;
+        cout << "- Valor de nodos sin hijos por nivel: " << endl;
         string leafNodes = getLeafNodes(root);
         if (leafNodes.empty()) {
             cout << NONE_LEAFS << endl;
@@ -190,10 +190,11 @@ int main(int argc, char *argv[]) {
             cout << leafNodes;
         }
 
+        cout << endl;
         if (root != nullptr) {
-            cout << "El árbol tiene una altura de: " << max_level << endl;
+            cout << "- El árbol tiene una altura de: " << max_level << endl;
         } else {
-            cout << "El árbol no tiene altura. No está creado." << endl;
+            cout << "- El árbol no tiene altura. No está creado." << endl;
         }
 
         cout << endl << endl;
