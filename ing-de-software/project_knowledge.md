@@ -1,9 +1,11 @@
 # Documentación del Proyecto: Servicio de Cine en PSeInt
 
 ## Descripción General
+
 El proyecto consiste en un sistema de cine implementado en PSeInt que simula la experiencia completa de consulta de cartelera, selección de butacas, compra de entradas y adquisición de productos.
 
 ## Objetivos
+
 - Gestionar información de N películas con atributos como título, sinopsis, género y clasificación por edad.
 - Mostrar la cartelera actual y las funciones disponibles.
 - Visualizar la distribución de butacas y su estado (disponible/ocupada).
@@ -13,6 +15,7 @@ El proyecto consiste en un sistema de cine implementado en PSeInt que simula la 
 - Generar métricas de ocupación y ventas para análisis.
 
 ## Requisitos Funcionales
+
 1. **Gestión de Películas**
    - Mantener un listado de películas con campos: `titulo`, `sinopsis`, `genero`, `edad_minima`.
 2. **Cartelera y Funciones**
@@ -33,6 +36,7 @@ El proyecto consiste en un sistema de cine implementado en PSeInt que simula la 
    - Gestión de precios y detalle de contenidos.
 
 ## Métricas y Estadísticas
+
 - Butacas vendidas en la fila con mayor número de ventas.
 - Total de butacas vendidas en la diagonal principal.
 - Butacas vendidas en columnas cuyos índices pertenecen a la serie de Fibonacci.
@@ -41,23 +45,27 @@ El proyecto consiste en un sistema de cine implementado en PSeInt que simula la 
 - Butacas vendidas en filas cuyo número es primo.
 
 ## Estructura de Datos
+
 - **Películas**: Vector de registros con `titulo`, `sinopsis`, `genero`, `edad_minima`.
 - **Butacas**: Matriz de booleanos o enteros indicando estado (0=disponible, 1=ocupada).
 - **Ventas**: Arreglo de registros (`fila`, `columna`, `tipo_cliente`, `precio`, `metodo_pago`).
 - **Tasa de Cambio**: Variable `tasa_usd_bsf` para conversión.
 
 ## Interfaz de Usuario
+
 - Menú principal numérico con opciones: Cartelera, Butacas, Compra, Pagos, Estadísticas, Productos, Salir.
 - Submenús claros para cada funcionalidad.
 - Representación gráfica simple de la matriz de butacas en consola.
 
 ## Algoritmos y Flujogramas
+
 - **Validación de Compra**: Verificar edad, disponibilidad y método de pago.
 - **Cálculo de Métricas**: Recorrido de matrices para diagonal, filas, columnas Fibonacci y filas primas.
 - **Conversión de Moneda**: Multiplicación por la tasa de cambio.
 - **Recorrido de Datos**: Uso de bucles anidados y funciones/procedimientos modulares.
 
 ## Consideraciones Técnicas
+
 - Uso de vectores, matrices y registros en PSeInt.
 - Modularidad: Procedimientos y funciones para cada tarea.
 - Validación robusta de entradas y manejo de errores.

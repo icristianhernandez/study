@@ -2,6 +2,7 @@
 # Proyecto: Servicio de Cine en PSeInt
 
 ## Descripción General
+
 Este proyecto implementa un sistema de servicio de cine utilizando PSeInt, permitiendo a los usuarios interactuar con una cartelera de películas, comprar entradas, seleccionar butacas, consultar menús de combos y comidas, y realizar pagos en diferentes métodos y monedas. El sistema está diseñado para simular la experiencia completa de compra y gestión de entradas en un cine moderno.
 
 ## Funcionalidades Principales

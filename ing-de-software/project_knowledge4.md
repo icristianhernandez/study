@@ -1,10 +1,10 @@
-#   Project Knowledge: Servicio de Cine en PSeInt
+# Project Knowledge: Servicio de Cine en PSeInt
 
-##   1. Descripción General del Proyecto
+## 1. Descripción General del Proyecto
 
     El proyecto consiste en el desarrollo de un servicio de cine simulado utilizando PSeInt. Este sistema permitirá a los usuarios realizar todas las operaciones típicas de un cine, desde la consulta de la cartelera y la información de las películas, hasta la selección de asientos, compra de entradas y combos de alimentos. El sistema se enfocará en la lógica de negocio y la gestión de datos, adaptándose a las capacidades y limitaciones de PSeInt.
 
-##   2. Objetivos Principales
+## 2. Objetivos Principales
 
     * Simular la experiencia de usuario de un servicio de cine.
     * Gestionar la información de películas, funciones, salas y ventas.
@@ -13,7 +13,7 @@
     * Manejar diferentes tipos de precios y métodos de pago, incluyendo conversión de moneda.
     * Ofrecer un menú de comidas, bebidas y combos.
 
-##   3. Funcionalidades Detalladas
+## 3. Funcionalidades Detalladas
 
     ###   3.1. Gestión de Películas
 
@@ -103,7 +103,7 @@
         * Tamaños disponibles (si aplica).
     * **Selección y Adición al Pedido:** Permitir al usuario agregar ítems del menú a su compra total.
 
-##   4. Consideraciones Tecnológicas y Estructura del Sistema
+## 4. Consideraciones Tecnológicas y Estructura del Sistema
 
     * **Plataforma:** PSeInt. Todas las interfaces y lógica se implementarán dentro de las capacidades de este pseudointérprete.
     * **Estructuras de Datos:** Se utilizarán arreglos (vectores y matrices) para gestionar la información de películas, salas, butacas, ventas, etc.
@@ -134,7 +134,7 @@
         * Listados de combos, bebidas y comidas con sus precios y descripciones.
         * Registro para combos/productos (nombre, descripcion, precio_ves, precio_usd).
 
-##   5. Flujo General de Usuario (Ejemplo)
+## 5. Flujo General de Usuario (Ejemplo)
 
     1.  Usuario inicia el programa.
     2.  Se muestra menú principal: Ver Cartelera, Comprar Entradas, Ver Mis Compras (opcional), Salir.
@@ -161,7 +161,7 @@
         * Sistema registra la venta, actualiza disponibilidad de butacas y genera un comprobante (simulado).
     5.  Salir.
 
-##   6. Posibles Extensiones (Fuera del Alcance Inicial)
+## 6. Posibles Extensiones (Fuera del Alcance Inicial)
 
     * Sistema de puntos o fidelidad.
     * Reservas online con tiempo límite para pago.
@@ -170,3 +170,4 @@
     * Módulo de administración para cargar películas, actualizar precios, etc.
     * Integración de reportes gráficos de ventas.
     * Personalización de combos y menús.
+
