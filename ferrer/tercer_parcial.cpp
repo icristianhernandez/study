@@ -256,61 +256,7 @@ class ConfigManager {
         out << default_config;
         out.close();
     }
-
-    static bool handle_config_error_and_repair(const runtime_error &e) {
-        system("cls"); // Assuming windows.h for system("cls")
-        cerr << "Ha ocurrido un error leyendo la configuración: " << e.what()
-             << endl;
-        cout << "¿Quieres que se corrija la configuración con un archivo de "
-                "configuración con las configuraciones iniciales? "
-                "Escribe 'si', o escribe 'no' para cerrar el programa."
-             << endl;
-
-        cout << "Tu opción: ";
-        string user_choice;
-        cin >> user_choice;
-
-        if (user_choice != "si") {
-            cout << "El usuario eligió no reparar la configuración." << endl;
-            return false; // User chose not to repair
-        }
-
-        try {
-            ConfigManager::repair_or_create_config_file();
-            cout << "El archivo de configuración ha sido escrito en: "
-                 << CONFIG_FILE_PATH << endl;
-            cout << "Por favor, ajusta la configuración según sea necesario."
-                 << endl;
-            cout << "Cuando hayas terminado, presiona Enter para continuar..."
-                 << endl;
-            cin.ignore(numeric_limits<streamsize>::max(),
-                       '\n'); // Clear buffer
-            cin.get();
-            return true; // Repair attempted, user acknowledged
-        } catch (const exception &ex) {
-            cerr << "Error en reparar la configuración: " << ex.what() << endl;
-            return false; // Repair process failed
-        }
-    }
 };
-
-ConfigManager::Config display_config_prompt_and_handle() {
-    ConfigManager::Config user_config;
-    while (true) {
-        try {
-            user_config = ConfigManager::read_config();
-            break;
-        } catch (const runtime_error &e) {
-            if (!ConfigManager::handle_config_error_and_repair(e)) {
-                throw runtime_error("Configuration could not be resolved "
-                                    "by repair. Program will exit.");
-            }
-            // If handle_config_error_and_repair returns true, the loop
-            // continues.
-        }
-    }
-    return user_config;
-}
 
 class LevelTransmitter {
   private:
@@ -519,7 +465,7 @@ class Factory {
     Factory() : batch_in_proccess(false) {}
 
     void add_pump_line(const PumpLine &pump_line) {
-        pump_lines[pump_line.get_pump().get_code()] = pump_line;
+        pump_lines.emplace(pump_line.get_pump().get_code(), pump_line);
     }
 
     bool is_batch_in_process() const { return batch_in_proccess; }
@@ -532,8 +478,83 @@ class Factory {
 };
 
 class Display {
+  private:
+    void clear_screen() { system("cls"); }
+
+    bool prompt_config_repair(const runtime_error &e) {
+        clear_screen();
+        cerr << "Ha ocurrido un error leyendo la configuración: " << e.what()
+             << endl;
+        cout << "¿Quieres que se corrija la configuración con un archivo de "
+                "configuración con las configuraciones iniciales? "
+                "Escribe 'si', o escribe 'no' para cerrar el programa."
+             << endl;
+
+        cout << "Tu opción: ";
+        string user_choice;
+        cin >> user_choice;
+
+        if (user_choice != "si") {
+            cout << "El usuario eligió no reparar la configuración." << endl;
+            return false; // User chose not to repair
+        }
+        return true; // User chose to repair
+    }
+
+    void show_config_repair_success() {
+        cout << "El archivo de configuración ha sido escrito en: "
+             << CONFIG_FILE_PATH << endl;
+        cout << "Por favor, ajusta la configuración según sea necesario."
+             << endl;
+        cout << "Cuando hayas terminado, presiona Enter para continuar..."
+             << endl;
+        cin.ignore(numeric_limits<streamsize>::max(),
+                   '\n'); // Clear buffer
+        cin.get();
+    }
+
+    void show_config_repair_error(const exception &ex) {
+        cerr << "Error en reparar la configuración: " << ex.what() << endl;
+    }
+
+    bool attempt_config_repair() {
+        try {
+            ConfigManager::repair_or_create_config_file();
+            show_config_repair_success();
+            return true;
+        } catch (const exception &ex) {
+            show_config_repair_error(ex);
+            return false;
+        }
+    }
+
+    bool handle_config_error(const runtime_error &e) {
+        if (!prompt_config_repair(e)) {
+            return false; // User declined repair
+        }
+
+        return attempt_config_repair();
+    }
+
   public:
     void general_simulation_tracker_ui() {}
+
+    ConfigManager::Config handle_config_loading() {
+        while (true) {
+            try {
+                return ConfigManager::read_config();
+            } catch (const runtime_error &e) {
+                if (!handle_config_error(e)) {
+                    throw runtime_error(
+                        "La configuración no pudo ser corregida con la "
+                        "herramineta de reparación. El programa se cerrará.");
+                }
+                // If repair succeeded, continue loop to try reading again
+            }
+        }
+    }
+
+    void clear_display() { clear_screen(); }
 };
 
 int main() {
@@ -546,7 +567,7 @@ int main() {
 
     while (is_running) {
         try {
-            user_config = display_config_prompt_and_handle();
+            user_config = ui_wrapper.handle_config_loading();
         } catch (const runtime_error &e) {
             cerr << "Error crítico durante el manejo del archivo de "
                     "configuración: "
@@ -555,19 +576,15 @@ int main() {
             return 1;
         }
 
-        system("cls");
+        ui_wrapper.clear_display();
         ui_wrapper.general_simulation_tracker_ui();
 
         if (!factory.is_batch_in_process()) {
+            // Process can start
         }
         // si falta tiempo por cumplir en las bombas, bombeo
-        else if () {
-        }
-        // si falta segundos por mezclar, sigo mezclando
-        else if () {
-        }
-        // si falta por vaciar, sigo vaciando
-        else if () {
+        else {
+            // Continue pumping
         }
 
         Sleep(ONE_SECOND_IN_MS);
