@@ -217,3 +217,66 @@ El trabajador B recibió `6.240.000`
 ## Respuestas Segundo Parcial
 
 ### Problema Nº I
+
+Cálculos base:
+
+* Valor de salvamento = `9000000 * 10% = 900000 Bs`
+* Base depreciable = `9000000 - 900000 = 8100000 Bs`
+* Depreciación anual = `8100000 / 10 = 810000 Bs`
+* Depreciación mensual = `810000 / 12 = 67500 Bs`
+* Monto a financiar con cuotas = `9000000 * 50% = 4500000 Bs`
+* Tasa de interés mensual = `12% / 12 = 1% = 0.01`
+* Fórmula de la cuota de renta:`R = M * i / (1 - (1 + i)^-n)`
+  donde `M` es el monto a pagar, `R` es la renta, `i` es la tasa de interés
+  y `n` es el número de cuotas.`
+
+| Año Operacional | Cuota Depreciación Anual | Depreciación Acumulada | Valor Contable    |
+|-----------------|-------------------------|------------------------|-------------------|
+| 0               | 0,00                    | 0,00                   | 9.000.000,00      |
+| 1               | 810.000,00              | 810.000,00             | 8.190.000,00      |
+| 2               | 810.000,00              | 1.620.000,00           | 7.380.000,00      |
+| 3               | 810.000,00              | 2.430.000,00           | 6.570.000,00      |
+| 4               | 810.000,00              | 3.240.000,00           | 5.760.000,00      |
+
+Respuestas:
+A) Para el año 1996 no ha tomado efecto la depreciación, el valor contable es
+completamente el valor de adquisición:  9.000.000 Bs
+
+B) 3.240.000 Bs
+
+C) Al ser lineal, la depreciación mensual es siempre la misma y ya está
+calculada arriba (`67.500 Bs`), y en el año 1997 solo se deprecia por 11 meses
+(de febrero hasta diciembre), por tanto la depreciación anual es de:
+`67.500 * 11 = 742.500 Bs`
+
+D) `R = 4500000 * 0.01 / (1 - (1 + 0.01)^(-12) ) = 399.819,5491 Bs`
+
+E) La depreciación dura 10 años, hasta el 01/31/2007. Por tanto, para el cierre
+del 2017 (31/12/2017), ya se terminó de depreciar, quedando completamente al
+valor de salvamento: `900.000 Bs`
+
+### Problema Nº II
+
+Datos:
+
+* U vendidas y producidas al mes = 4000
+* CFU administrativo = 100
+* Alquiler = 400.000
+* CTU = 900
+* PVU = 1,4 * CTU = 1260
+
+A) Fórmula objetivo: `MC = PVU - CVU`
+Para obtener CVU: `CVU = CTU - CFU`
+Donde nos falta CFU, donde tenemos dos datos relacionados: alquiler (mensual) y
+administrativo (por unidad). Podemos convertir el costo del alquiler a unidades
+al dividirlo por las unidades que hacemos en el mes: `CFU alquiler = 400000 / 4000 = 100`
+
+`CFU = CFU administrativo + CFU alquiler = 100 + 100 = 200`
+`CVU = 900 - 200 = 700`
+`MC = 1260 - 700 = 560`
+
+B) Fórmula objetivo: `PEU = CFT / MC`
+Solo falta obtener CFT, que solo hace falta convertir el gasto administrativo a
+mensual: `CFT administrativo = 100 * 4000 = 400.000`
+`CFT = CFT administrativo + CFT alquiler = 400000 + 400000 = 800.000`
+`PEU = 800000 / 560 = 1.428,57 Bs`
