@@ -117,3 +117,103 @@ La Constructora "B" oferta para el primer diseño tiene un costo de Bs. 12.000.0
 > Se pide:
 > a) Determinar cuál de las dos alternativas es la más recomendable.
 > b) Cual es el Costo de Oportunidad de la alternativa no elegida.
+
+## Respuestas
+
+### Problema Nº I
+
+Como el interes también se puede definir como la suma del interés obtenido en
+cada capitalización, y aplicamos para cada capitalización una reducción de 1/4,
+nos queda queda 3/4 de los intereses producidos en cada capitalización, y estas
+por ser sumatoria, se puede obtener el factor común, permitiendo calcular el
+interés obtenido en el periodo como el interés normal * 3/4.
+
+Interés obtenido en los tres primeros años (interés de 9%):
+
+```
+I1 = 10000 * 0.09 * 3 * 3/4 = 2025  Bs
+```
+
+Interés obtenido en los siguientes cuatro años (interés de 12%):
+
+```
+I2 = 10000 * 0.12 * 4 * 3/4 = 3600 Bs
+```
+
+Interés obtenido en los últimos tres años (interés de 15%):
+
+```
+I3 = 10000 * 0.15 * 3 * 3/4 = 3375 Bs
+```
+
+R) El valor acumulado es el monto inicial más los tres intereses resultante:
+
+```
+M = 10000 + 2025 + 3600 + 3375 = 19000
+```
+
+### Problema Nº II
+
+A) Colegio A:  
+Fórmula: `12 / 60 * 100 = 20%`  
+
+Colegio B:  
+Fórmula: `18 / 120 * 100 = 15%`  
+
+B) Porcentualmente, en el colegio A gusta más (`20% > 15%`).
+
+C)  
+Fórmulas:  
+`120 + 60 = 180` alumnos en total  
+`12 + 18 = 30` alumnos a los que les gusta el rock  
+`180 - 30 = 150` alumnos a los que no les gusta el rock  
+`150 / 180 * 100 = 83.33%` de los alumnos no les gusta el rock
+
+D)  
+Si consideramos que el porcentaje de alumnos a los que les gusta el rock es
+aplicable tanto para hombres como para mujeres en el colegio B (15%):
+
+Fórmula:  
+`60 * 15 / 100 = 9` alumnas del colegio B les gusta el rock
+
+E)
+De igual forma que en el ejercicio anterior, si aplicamos el gusto por el rock
+de manera indistinta al género, entonces la cifra calculada en el punto (C) es
+la respuesta: al `83.33%` de los estudiantes hombres no les gusta el rock.
+
+### Problema Nº III
+
+A) Total de juegos, aplicando regla de tres a que 70 juegos son el 35%:
+`70 / 35 * 100 = 200` juegos en total.
+
+B) Total de juegos de acción, aplicando regla de tres a que 25% son juegos de acción:
+`200 * 25 / 100 = 50` juegos de acción.
+
+C) Costo total de los juegos de acción: `50 * 25 = 1250$`.
+
+D) Costo total de los juegos de inteligencia artificial, aplicando regla de tres a que 40% son juegos de IA:
+`200 * 40 / 100 = 80` juegos de IA.
+
+Costo total de los juegos de IA: `80 * 25 = 2000$`.
+
+E) Total de juegos, sumando los juegos de acción, IA y de inversión financiera:
+`50 + 80 + 70 = 200` juegos.
+
+### Problema Nº IV
+
+El interés se calcula como `I = C * N * i`, donde ambos trabajadores terminan
+alcanzando el mismo `I`, durante el mismo tiempo y conociendo el interés para
+ambos casos, solo desconociendo ambos capitales. Pero sabemos que: `CA = CB + 1560000`, entonces:
+`CB * N * 20% = (CB + 1560000) * N * 16%`, se cancela N por ser igual en ambos
+lados:
+`CB *  20% = (CB + 1560000) *  16%`, despejo CB:
+`CB = (1560000 * 16%) / (20% - 16%) = 6240000`
+Y por la igualdad con CA, `CA = 6240000 + 1560000 = 7800000`
+
+R)
+El trabajador A recibió: `7.800.000`
+El trabajador B recibió `6.240.000`
+
+## Respuestas Segundo Parcial
+
+### Problema Nº I
